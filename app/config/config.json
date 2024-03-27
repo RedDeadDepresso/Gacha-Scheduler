@@ -1,0 +1,22 @@
+{
+    "Material": {
+        "AcrylicBlurRadius": 40
+    },
+    "Update": {
+        "CheckUpdateAtStartUp": true
+    },
+    "MainWindow": {
+        "DpiScale": "Auto",
+        "Language": "en_US",
+        "MicaEnabled": true
+    },
+    "Games": {
+        "MessageBoxEnabled": true,
+        "ScriptDelay": 139,
+        "ToastEnabled": true
+    },
+    "QFluentWidgets": {
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Auto"
+    }
+}

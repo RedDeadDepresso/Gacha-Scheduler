@@ -26,22 +26,29 @@ class SettingInterface(ScrollArea):
         # setting label
         self.settingLabel = QLabel(self.tr("Settings"), self)
 
-        # music folders
-        self.musicInThisPCGroup = SettingCardGroup(
-            self.tr("Music on this PC"), self.scrollWidget)
-        self.musicFolderCard = FolderListSettingCard(
-            cfg.musicFolders,
-            self.tr("Local music library"),
-            directory=QStandardPaths.writableLocation(
-                QStandardPaths.MusicLocation),
-            parent=self.musicInThisPCGroup
+        # games
+        self.gamesGroup = SettingCardGroup(
+            self.tr('Games'), self.scrollWidget)
+        self.toastCard = SwitchSettingCard(
+            FIF.LAYOUT,
+            self.tr('Show Toast Notification'),
+            None,
+            cfg.toastEnabled,
+            self.gamesGroup
         )
-        self.downloadFolderCard = PushSettingCard(
-            self.tr('Choose folder'),
-            FIF.DOWNLOAD,
-            self.tr("Download directory"),
-            cfg.get(cfg.downloadFolder),
-            self.musicInThisPCGroup
+        self.messageBoxCard = SwitchSettingCard(
+            FIF.LAYOUT,
+            self.tr('Show MessageBox'),
+            None,
+            cfg.messageBoxEnabled,
+            self.gamesGroup
+        )
+        self.scriptCard = RangeSettingCard(
+            cfg.scriptDelay,
+            FIF.ROBOT,
+            self.tr('Script Delay'),
+            None,
+            self.gamesGroup
         )
 
         # personalization
@@ -166,8 +173,9 @@ class SettingInterface(ScrollArea):
         self.settingLabel.move(36, 30)
 
         # add cards to group
-        self.musicInThisPCGroup.addSettingCard(self.musicFolderCard)
-        self.musicInThisPCGroup.addSettingCard(self.downloadFolderCard)
+        self.gamesGroup.addSettingCard(self.toastCard)
+        self.gamesGroup.addSettingCard(self.messageBoxCard)
+        self.gamesGroup.addSettingCard(self.scriptCard)
 
         self.personalGroup.addSettingCard(self.micaCard)
         self.personalGroup.addSettingCard(self.themeCard)
@@ -186,7 +194,7 @@ class SettingInterface(ScrollArea):
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
-        self.expandLayout.addWidget(self.musicInThisPCGroup)
+        self.expandLayout.addWidget(self.gamesGroup)
         self.expandLayout.addWidget(self.personalGroup)
         self.expandLayout.addWidget(self.materialGroup)
         self.expandLayout.addWidget(self.updateSoftwareGroup)
@@ -201,23 +209,11 @@ class SettingInterface(ScrollArea):
             parent=self
         )
 
-    def __onDownloadFolderCardClicked(self):
-        """ download folder card clicked slot """
-        folder = QFileDialog.getExistingDirectory(
-            self, self.tr("Choose folder"), "./")
-        if not folder or cfg.get(cfg.downloadFolder) == folder:
-            return
-
-        cfg.set(cfg.downloadFolder, folder)
-        self.downloadFolderCard.setContent(folder)
-
     def __connectSignalToSlot(self):
         """ connect signal to slot """
         cfg.appRestartSig.connect(self.__showRestartTooltip)
 
-        # music in the pc
-        self.downloadFolderCard.clicked.connect(
-            self.__onDownloadFolderCardClicked)
+        # games
 
         # personalization
         self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci), lazy=True))

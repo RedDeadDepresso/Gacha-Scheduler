@@ -33,12 +33,11 @@ def isWin11():
 
 class Config(QConfig):
     """ Config of application """
-
-    # folders
-    musicFolders = ConfigItem(
-        "Folders", "LocalMusic", [], FolderListValidator())
-    downloadFolder = ConfigItem(
-        "Folders", "Download", "app/download", FolderValidator())
+    
+    # games
+    toastEnabled = ConfigItem("Games", "ToastEnabled", True, BoolValidator())
+    messageBoxEnabled = ConfigItem("Games", "MessageBoxEnabled", True, BoolValidator())
+    scriptDelay = RangeConfigItem("Games", "ScriptDelay", 30, RangeValidator(0, 600))
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
