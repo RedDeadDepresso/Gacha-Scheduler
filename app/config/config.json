@@ -12,11 +12,11 @@
     },
     "Games": {
         "MessageBoxEnabled": true,
-        "ScriptDelay": 139,
+        "ScriptDelay": 80,
         "ToastEnabled": true
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Auto"
+        "ThemeMode": "Light"
     }
 }

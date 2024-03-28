@@ -8,7 +8,6 @@ from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, Navi
                             SplashScreen)
 from qfluentwidgets import FluentIcon as FIF
 
-from .gallery_interface import GalleryInterface
 from .schedule_interface import ScheduleInterface
 from .setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
@@ -17,6 +16,7 @@ from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
 from ..components.add_message_box import AddMessageBox
+from ..components.navigation_game_widget import NavigationGameWidget
 
 
 class MainWindow(FluentWindow):
@@ -31,7 +31,6 @@ class MainWindow(FluentWindow):
 
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
-        self.navigationInterface.setReturnButtonVisible(False)
         self.navigationInterface.setMenuButtonVisible(False)
         self.navigationInterface.setCollapsible(False)
 
@@ -43,19 +42,22 @@ class MainWindow(FluentWindow):
 
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
-        signalBus.switchToSampleCard.connect(self.switchToSample)
 
     def initNavigation(self):
         # add navigation items
         t = Translator()
-        # self.addSubInterface(self.homeInterface, FIF.HOME, self.tr('Home'))
-        # self.addSubInterface(self.iconInterface, Icon.EMOJI_TAB_SYMBOLS, t.icons)
-        # self.navigationInterface.addSeparator()
+        self.navigationInterface.addSeparator(NavigationItemPosition.TOP)
 
-        # pos = NavigationItemPosition.SCROLL
-        # self.addSubInterface(self.basicInputInterface, FIF.CHECKBOX,t.basicInput, pos)
+        pos = NavigationItemPosition.SCROLL
+        self.navigationInterface.addWidget(
+            'game', 
+            NavigationGameWidget('Arknights', 'app/resource/images/arknights.png'),
+            None,
+            pos
+        )
 
         # add custom widget to bottom
+        self.navigationInterface.addSeparator(NavigationItemPosition.BOTTOM)
         self.navigationInterface.addWidget(
             'AddGame',
             NavigationPushButton(FIF.ADD, self.tr('Add Game'), False),
@@ -91,14 +93,6 @@ class MainWindow(FluentWindow):
         super().resizeEvent(e)
         if hasattr(self, 'splashScreen'):
             self.splashScreen.resize(self.size())
-
-    def switchToSample(self, routeKey, index):
-        """ switch to sample """
-        interfaces = self.findChildren(GalleryInterface)
-        for w in interfaces:
-            if w.objectName() == routeKey:
-                self.stackedWidget.setCurrentWidget(w, False)
-                w.scrollToCard(index)
 
     def showMessageBox(self):
         w = AddMessageBox(self)

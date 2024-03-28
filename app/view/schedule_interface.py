@@ -38,7 +38,7 @@ class ScheduleInterface(ScrollArea):
 
         # initialize style sheet
         self.scrollWidget.setObjectName('scrollWidget')
-        self.scheduleLabel.setObjectName('scheduleLabel')
+        self.scheduleLabel.setObjectName('settingLabel')
         StyleSheet.SETTING_INTERFACE.apply(self)
 
         # initialize layout
