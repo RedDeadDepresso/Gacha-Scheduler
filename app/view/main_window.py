@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize
 from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget
 
-from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, MessageBox, FluentWindow,
+from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, NavigationPushButton, MessageBox, FluentWindow,
                             SplashScreen)
 from qfluentwidgets import FluentIcon as FIF
 
@@ -16,6 +16,7 @@ from ..common.icon import Icon
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
 from ..common import resource
+from ..components.add_message_box import AddMessageBox
 
 
 class MainWindow(FluentWindow):
@@ -30,6 +31,9 @@ class MainWindow(FluentWindow):
 
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
+        self.navigationInterface.setReturnButtonVisible(False)
+        self.navigationInterface.setMenuButtonVisible(False)
+        self.navigationInterface.setCollapsible(False)
 
         self.connectSignalToSlot()
 
@@ -52,6 +56,12 @@ class MainWindow(FluentWindow):
         # self.addSubInterface(self.basicInputInterface, FIF.CHECKBOX,t.basicInput, pos)
 
         # add custom widget to bottom
+        self.navigationInterface.addWidget(
+            'AddGame',
+            NavigationPushButton(FIF.ADD, self.tr('Add Game'), False),
+            self.showMessageBox,
+            NavigationItemPosition.BOTTOM
+        )
         self.addSubInterface(
             self.scheduleInterface, FIF.DATE_TIME, self.tr('Schedule'), NavigationItemPosition.BOTTOM)
         
@@ -89,3 +99,7 @@ class MainWindow(FluentWindow):
             if w.objectName() == routeKey:
                 self.stackedWidget.setCurrentWidget(w, False)
                 w.scrollToCard(index)
+
+    def showMessageBox(self):
+        w = AddMessageBox(self)
+        w.exec()

@@ -16,6 +16,12 @@ class AddMessageBox(MessageBoxBase):
         self.nameLineEdit = LineEdit(self)
 
         # Create two QHBoxLayouts, each containing a LineEdit and a PushButton
+        self.iconLayout = QHBoxLayout()
+        self.iconLineEdit = LineEdit(self)
+        self.iconDialogButton = PushButton(self.tr('Browse'), self)
+        self.iconLayout.addWidget(self.iconLineEdit)
+        self.iconLayout.addWidget(self.iconDialogButton)
+
         self.gameLayout = QHBoxLayout()
         self.gameLineEdit = LineEdit(self)
         self.gameDialogButton = PushButton(self.tr('Browse'), self)
@@ -29,12 +35,14 @@ class AddMessageBox(MessageBoxBase):
         self.scriptLayout.addWidget(self.scriptDialogButton)
 
         self.nameLineEdit.setPlaceholderText(self.tr('Enter name of the game'))
+        self.iconLineEdit.setPlaceholderText(self.tr('Enter icon path'))
         self.gameLineEdit.setPlaceholderText(self.tr('Enter game path'))
         self.scriptLineEdit.setPlaceholderText(self.tr('Enter script path'))
 
         # add widget to view layout
         self.viewLayout.addWidget(self.titleLabel)
         self.viewLayout.addWidget(self.nameLineEdit)
+        self.viewLayout.addLayout(self.iconLayout)
         self.viewLayout.addLayout(self.gameLayout)
         self.viewLayout.addLayout(self.scriptLayout)
 
@@ -45,20 +53,21 @@ class AddMessageBox(MessageBoxBase):
         self.widget.setMinimumWidth(500)
 
         # connect the file dialog buttons to methods
-        self.gameDialogButton.clicked.connect(self.openGameDialog)
-        self.scriptDialogButton.clicked.connect(self.openScriptDialog)
+        self.iconDialogButton.clicked.connect(lambda: self.openImageDialog(self.iconDialogButton))
+        self.gameDialogButton.clicked.connect(lambda: self.openExeDialog(self.gameDialogButton))
+        self.scriptDialogButton.clicked.connect(lambda: self.openExeDialog(self.scriptDialogButton))
 
-    def openGameDialog(self):
+    def openImageDialog(self, lineEdit):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "All Files (*)", options=options)
         if fileName:
-            self.gameLineEdit.setText(fileName)  # update the first LineEdit with the selected file
+            lineEdit.setText(fileName)  # update the second LineEdit with the selected file
 
-    def openScriptDialog(self):
+    def openExeDialog(self, lineEdit):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "All Files (*)", options=options)
         if fileName:
-            self.scriptLineEdit.setText(fileName)  # update the second LineEdit with the selected file
+            lineEdit.setText(fileName)  # update the second LineEdit with the selected file
 
 
 class Demo(QWidget):
