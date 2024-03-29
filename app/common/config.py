@@ -62,13 +62,12 @@ class Config(QConfig):
     def __init__(self):
         super().__init__()
         self.games = {}
-        self.valid = {'IconPath', 'GamePath', 'ScriptPath'}
+        self.valid = {'IconPath', 'GamePath', 'ScriptPath', 'Schedule'}
 
     def __addItem(self, group, name, value):
         if name in self.valid:
-            item = ConfigItem(group, name, '')   
-            item.value = value
-            setattr(self.__class__, group+name, item)
+            item_name = group + name
+            setattr(self.__class__, item_name, value)
 
     def __removeItem(self, group, name):
         """ remove a config item
@@ -80,17 +79,18 @@ class Config(QConfig):
         """
         # Check if the item exists
         item_name = group + name
-        if hasattr(self.__class__, item_name):
-            delattr(self.__class__, item_name)
+        delattr(self.__class__, item_name)
 
-    def addGame(self, gameName, iconPath, gamePath, scriptPath):
+    def addGame(self, name, iconPath, gamePath, scriptPath, schedule=[], save=True):
         try:
-            gameConfig = GameConfig(gameName, iconPath, gamePath, scriptPath)
-            self.__addItem(gameName, 'IconPath', iconPath)
-            self.__addItem(gameName, 'GamePath', gamePath)
-            self.__addItem(gameName, 'ScriptPath', scriptPath)
-            self.save()
-            self.games[gameName] = gameConfig
+            gameConfig = GameConfig(name, iconPath, gamePath, scriptPath, schedule)
+            self.__addItem(name, 'IconPath', gameConfig.iconPath)
+            self.__addItem(name, 'GamePath', gameConfig.gamePath)
+            self.__addItem(name, 'ScriptPath', gameConfig.scriptPath)
+            self.__addItem(name, 'Schedule', gameConfig.schedule)
+            if save:
+                self.save()
+            self.games[name] = gameConfig
             gameConfig.addNotify()
         except Exception as e:
             print(e)
@@ -105,6 +105,7 @@ class Config(QConfig):
             self.__removeItem(name, 'IconPath')
             self.__removeItem(name, 'GamePath')
             self.__removeItem(name, 'ScriptPath')
+            self.__removeItem(name, 'Schedule')
             self.save()
             gameConfig.removeNotify()
         except Exception as e:
@@ -143,17 +144,19 @@ def customload(self, file=None, config=None):
             items[item.key] = item
 
     # update the value of config item
-    games_settings = {'IconPath', 'GamePath', 'ScriptPath'}
+    games_settings = {'IconPath', 'GamePath', 'ScriptPath', 'Schedule'}
     for k, v in cfg.items():
         if not isinstance(v, dict) and items.get(k) is not None:
             items[k].deserializeFrom(v)
 
         elif isinstance(v, dict):
             if set(v.keys()) == games_settings:
-                self._cfg.addGame(gameName=k, 
+                self._cfg.addGame(name=k, 
                                   iconPath=v['IconPath'], 
                                   gamePath=v['GamePath'], 
-                                  scriptPath=v['ScriptPath']
+                                  scriptPath=v['ScriptPath'],
+                                  schedule=v['Schedule'],
+                                  save=False
                                   )
             
             else:

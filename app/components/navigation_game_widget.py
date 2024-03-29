@@ -1,4 +1,5 @@
 # coding:utf-8
+import os
 from typing import Union, List
 
 from PySide6.QtCore import (Qt, Signal, QRect, QRectF, QPropertyAnimation, Property, QMargins,
@@ -23,7 +24,7 @@ class NavigationGameWidget(NavigationWidget):
         super().__init__(isSelectable=False, parent=parent)
         self.name = gameConfig.name
         self.layout = QHBoxLayout(self)
-        self.setAvatarLabel(gameConfig.iconPath)
+        self.setAvatarLabel(gameConfig.iconPath.value)
         self.setNameLabel()
         self.setPlayButton()
         self.setScriptButton()
@@ -36,7 +37,7 @@ class NavigationGameWidget(NavigationWidget):
         self.layout.addWidget(self.nameLabel)
 
     def setAvatarLabel(self, avatar: Union[str, QPixmap, QImage]):
-        if isinstance(avatar, str):
+        if isinstance(avatar, str) and os.path.exists(avatar):
             avatar = QImage(avatar)
         elif isinstance(avatar, QPixmap):
             avatar = avatar.toImage()

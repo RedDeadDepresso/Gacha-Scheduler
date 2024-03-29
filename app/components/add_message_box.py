@@ -37,9 +37,9 @@ class AddMessageBox(MessageBoxBase):
         self.scriptLayout.addWidget(self.scriptLineEdit)
         self.scriptLayout.addWidget(self.scriptDialogButton)
 
-        self.nameLineEdit.setPlaceholderText(self.tr('Enter name of the game'))
+        self.nameLineEdit.setPlaceholderText(self.tr('Enter name of the game*'))
         self.iconLineEdit.setPlaceholderText(self.tr('Enter icon path'))
-        self.gameLineEdit.setPlaceholderText(self.tr('Enter game path'))
+        self.gameLineEdit.setPlaceholderText(self.tr('Enter game path*'))
         self.scriptLineEdit.setPlaceholderText(self.tr('Enter script path'))
 
         # add widget to view layout
@@ -91,23 +91,25 @@ class AddMessageBox(MessageBoxBase):
             lineEdit.setText(fileName)
 
     def validateName(self):
-        if not cfg.getGame(self.name):
+        if cfg.getGame(self.name) is None:
             self.nameLineEdit.setStyleSheet("border: 1px solid red;")
             return True
         else:
-            return False
+            self.lineEdit.setStyleSheet("")
         
     def validatePaths(self):
-        lineEdits = [self.iconLineEdit, self.gameLineEdit, self.scriptLineEdit]
         valid = True
-        for lineEdit in lineEdits:
+        for lineEdit in [self.iconLineEdit, self.gameLineEdit, self.scriptLineEdit]:
             path = lineEdit.text()
-            if not os.path.exists(path):
+            if lineEdit is self.gameLineEdit and not os.path.exists(path):
+                lineEdit.setStyleSheet("border: 1px solid red;")
+                valid = False
+            elif path and not os.path.exists(path):
                 lineEdit.setStyleSheet("border: 1px solid red;")
                 valid = False
             else:
                 lineEdit.setStyleSheet("")
-                
+
         return valid
 
     def __onYesButtonClicked(self):

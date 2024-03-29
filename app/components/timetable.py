@@ -66,7 +66,7 @@ class TimeTable(TableWidget):
         self.setFixedSize(625, 440)
         self.resizeColumnsToContents()
 
-    def addGame(self):
+    def addGame(self, gameConfig):
         pass
 
     def removeGame(self):

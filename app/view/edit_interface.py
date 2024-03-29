@@ -34,7 +34,7 @@ class EditInterface(ScrollArea):
             self.tr('Browse'),
             FIF.FOLDER,
             self.tr("Icon Path"),
-            gameConfig.iconPath,
+            cfg.get(gameConfig.iconPath),
             self.editGroup
         )
 
@@ -42,7 +42,7 @@ class EditInterface(ScrollArea):
             self.tr('Browse'),
             FIF.FOLDER,
             self.tr("Game Path"),
-            gameConfig.gamePath,
+            cfg.get(gameConfig.gamePath),
             self.editGroup
         )
 
@@ -50,11 +50,21 @@ class EditInterface(ScrollArea):
             self.tr('Browse'),
             FIF.FOLDER,
             self.tr("Script Path"),
-            gameConfig.scriptPath,
+            cfg.get(gameConfig.scriptPath),
             self.editGroup
         )
 
+        self.iconCard.clicked.connect(
+            lambda item=gameConfig.iconPath, card=self.iconCard: self.openImageDialog(item, card))
+
+        self.scriptCard.clicked.connect(
+            lambda item=gameConfig.scriptPath, card=self.scriptCard: self.openExeDialog(item, card))
+        
+        self.gameCard.clicked.connect(
+            lambda item=gameConfig.gamePath, card=self.gameCard: self.openExeDialog(item, card))
+        
         self.__initWidget()
+
 
     def __initWidget(self):
         self.resize(1000, 800)
@@ -71,7 +81,6 @@ class EditInterface(ScrollArea):
 
         # initialize layout
         self.__initLayout()
-        self.__connectSignalToSlot()
 
     def __initLayout(self):
         self.settingLabel.move(36, 30)
@@ -86,21 +95,23 @@ class EditInterface(ScrollArea):
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         self.expandLayout.addWidget(self.editGroup)
 
-    def __onBrowseCardClicked(self, cfgItem):
-        """ download folder card clicked slot """
-        folder = QFileDialog.getExistingDirectory(
-            self, self.tr("Choose folder"), "./")
-        if not folder or cfg.get(cfgItem) == folder:
+    def openImageDialog(self, item, card):
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg)", options=options)
+        if not fileName or cfg.get(item) == fileName:
             return
+        
+        cfg.set(item, fileName)
+        card.setContent(fileName)
 
-        cfg.set(cfgItem, folder)
-        self.downloadFolderCard.setContent(folder)
+    def openExeDialog(self, item, card):
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py)", options=options)
+        if not fileName or cfg.get(item) == fileName:
+            return
+        
+        cfg.set(item, fileName)
+        card.setContent(fileName)
 
-    def __connectSignalToSlot(self):
-        """ connect signal to slot """
-        # music in the pc
-        self.iconCard.clicked.connect(
-            self.__onBrowseCardClicked)
-        pass
 
 
