@@ -6,6 +6,7 @@ from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout
 
 from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView, TableItemDelegate, setCustomStyleSheet
+from ..common.config import cfg
 from ..common.game_config import GameConfig
 
 
@@ -62,12 +63,24 @@ class TimeTable(TableWidget):
         for i, songInfo in enumerate(songInfos):
             for j in range(5):
                 self.setItem(i, j, QTableWidgetItem(songInfo[j]))
-
+        
         self.setFixedSize(625, 440)
         self.resizeColumnsToContents()
 
     def addGame(self, gameConfig):
         pass
 
-    def removeGame(self):
-        pass
+    def removeGame(self, gameConfig):
+        self.setTable()
+
+    def setTable(self):
+        temp = []
+        for game in cfg.games:
+            for time in game['Schedule']:
+                temp.append((time, game))
+
+        temp.sort(lambda x: x[0])
+        for row, info in enumerate(temp):
+            for col in range(2):
+                self.setItem(row, col, QTableWidgetItem(info[col]))
+

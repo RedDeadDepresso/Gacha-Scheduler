@@ -1,9 +1,9 @@
 {
-    "aaa": {
-        "GamePath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/gacha_scheduler.py",
-        "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
+    "Arknights": {
+        "GamePath": "C:/Program Files/BlueStacks_nxt/HD-Player.exe",
+        "IconPath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/app/resource/images/arknights.png",
         "Schedule": [],
-        "ScriptPath": "C:/Users/mizan/Pictures/ui copy.py"
+        "ScriptPath": "C:/Scripts/MAA-v4.21.0-win-x64/MAA.exe"
     },
     "Material": {
         "AcrylicBlurRadius": 40
@@ -18,7 +18,7 @@
     },
     "Games": {
         "MessageBoxEnabled": true,
-        "ScriptDelay": 358,
+        "ScriptDelay": 390,
         "ToastEnabled": true
     },
     "QFluentWidgets": {
