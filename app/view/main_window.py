@@ -5,12 +5,14 @@ from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget
 
 from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, NavigationPushButton, MessageBox, FluentWindow,
-                            SplashScreen)
+                            SplashScreen, qrouter)
 from qfluentwidgets import FluentIcon as FIF
 
+from .edit_interface import EditInterface
 from .schedule_interface import ScheduleInterface
 from .setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
+from ..common.game_config import GameConfig
 from ..common.icon import Icon
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
@@ -24,6 +26,7 @@ class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
         self.initWindow()
+        GameConfig.observers.append(self)
 
         # create sub interface
         self.scheduleInterface = ScheduleInterface(self)
@@ -48,13 +51,8 @@ class MainWindow(FluentWindow):
         t = Translator()
         self.navigationInterface.addSeparator(NavigationItemPosition.TOP)
 
-        pos = NavigationItemPosition.SCROLL
-        self.navigationInterface.addWidget(
-            'game', 
-            NavigationGameWidget('Arknights', 'app/resource/images/arknights.png'),
-            None,
-            pos
-        )
+        for gameConfig in cfg.games.values():
+            self.addGame(gameConfig)
 
         # add custom widget to bottom
         self.navigationInterface.addSeparator(NavigationItemPosition.BOTTOM)
@@ -97,3 +95,20 @@ class MainWindow(FluentWindow):
     def showMessageBox(self):
         w = AddMessageBox(self)
         w.exec()
+
+    def addGame(self, gameConfig):
+        interface = EditInterface(gameConfig, self)
+        interface.setProperty("isStackedTransparent", False)
+        self.stackedWidget.addWidget(interface)
+    
+        widget = NavigationGameWidget(gameConfig)    
+        self.navigationInterface.addWidget(
+            gameConfig.name, 
+            widget,
+            None,
+            NavigationItemPosition.SCROLL
+        )
+        widget.editButton.clicked.connect(lambda checked=False, interface=interface: self.switchTo(interface))
+
+    def removeGame(self, gameConfig):
+        pass

@@ -6,7 +6,8 @@ from PySide6.QtCore import Qt, QPropertyAnimation
 from PySide6.QtGui import QPalette, QColor
 from PySide6.QtWidgets import QApplication, QDialog, QGraphicsOpacityEffect, QWidget, QHBoxLayout, QFileDialog
 
-from qfluentwidgets import qconfig, MessageBoxBase, SubtitleLabel, LineEdit, PushButton, setTheme, Theme
+from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit, PushButton, setTheme, Theme
+from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
 
 
 class AddMessageBox(MessageBoxBase):
@@ -90,7 +91,7 @@ class AddMessageBox(MessageBoxBase):
             lineEdit.setText(fileName)
 
     def validateName(self):
-        if not qconfig.getGame(self.name):
+        if not cfg.getGame(self.name):
             self.nameLineEdit.setStyleSheet("border: 1px solid red;")
             return True
         else:
@@ -114,7 +115,7 @@ class AddMessageBox(MessageBoxBase):
             self.accept()
             self.accepted.emit()
 
-            qconfig.addGame(
+            cfg.addGame(
                 self.name, 
                 self.iconPath, 
                 self.gamePath, 

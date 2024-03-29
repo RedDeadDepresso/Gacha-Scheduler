@@ -1,7 +1,7 @@
 class GameConfig:
     observers = []
 
-    def __init__(self, name):
+    def __init__(self, name, iconPath, gamePath, scriptPath):
         self.name = name
         self.iconPath = None
         self.gamePath = None
@@ -9,8 +9,8 @@ class GameConfig:
 
     def addNotify(self):
         for observer in self.observers:
-            observer.addNotify(self)
+            observer.addGame(self)
 
     def removeNotify(self):
         for observer in self.observers:
-            observer.removeNotify(self)
+            observer.removeGame(self)

@@ -1,8 +1,8 @@
 {
-    "aaa": {
-        "GamePath": "C:/Users/mizan/Pictures/complex_example.py",
+    "a": {
+        "GamePath": "C:/Users/mizan/Pictures/ui copy.py",
         "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
-        "ScriptPath": "C:/Users/mizan/Pictures/ui copy.py"
+        "ScriptPath": "C:/Users/mizan/Pictures/Untitled-1.py"
     },
     "Material": {
         "AcrylicBlurRadius": 40
@@ -13,15 +13,30 @@
     "MainWindow": {
         "DpiScale": "Auto",
         "Language": "en_US",
-        "MicaEnabled": true
+        "MicaEnabled": false
     },
     "Games": {
         "MessageBoxEnabled": true,
-        "ScriptDelay": 60,
+        "ScriptDelay": 126,
         "ToastEnabled": true
+    },
+    "ooo": {
+        "GamePath": "C:/Users/mizan/Pictures/ui copy.py",
+        "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
+        "ScriptPath": "C:/Users/mizan/Pictures/Untitled-1.py"
+    },
+    "ppp": {
+        "GamePath": "C:/Users/mizan/Pictures/complex_example.py",
+        "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
+        "ScriptPath": "C:/Users/mizan/Pictures/ui copy.py"
+    },
+    "pppl": {
+        "GamePath": "C:/Users/mizan/Pictures/ui copy.py",
+        "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
+        "ScriptPath": "C:/Users/mizan/Pictures/ui copy.py"
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Dark"
+        "ThemeMode": "Auto"
     }
 }

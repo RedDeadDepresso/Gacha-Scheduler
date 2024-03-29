@@ -19,11 +19,11 @@ from qfluentwidgets.components.navigation import NavigationAvatarWidget, Navigat
 class NavigationGameWidget(NavigationWidget):
     """ Avatar widget """
 
-    def __init__(self, name: str, avatar: Union[str, QPixmap, QImage], parent=None):
+    def __init__(self, gameConfig, parent=None):
         super().__init__(isSelectable=False, parent=parent)
-        self.name = name
+        self.name = gameConfig.name
         self.layout = QHBoxLayout(self)
-        self.setAvatarLabel(avatar)
+        self.setAvatarLabel(gameConfig.iconPath)
         self.setNameLabel()
         self.setPlayButton()
         self.setScriptButton()
@@ -40,6 +40,8 @@ class NavigationGameWidget(NavigationWidget):
             avatar = QImage(avatar)
         elif isinstance(avatar, QPixmap):
             avatar = avatar.toImage()
+        else:
+            avatar = QImage(FIF.GAME.path())
 
         self.avatar = avatar.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.avatarLabel = QLabel(self)

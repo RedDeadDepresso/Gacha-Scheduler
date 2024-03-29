@@ -86,20 +86,21 @@ class EditInterface(ScrollArea):
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         self.expandLayout.addWidget(self.editGroup)
 
-    def __onDownloadFolderCardClicked(self):
+    def __onBrowseCardClicked(self, cfgItem):
         """ download folder card clicked slot """
         folder = QFileDialog.getExistingDirectory(
             self, self.tr("Choose folder"), "./")
-        if not folder or cfg.get(cfg.downloadFolder) == folder:
+        if not folder or cfg.get(cfgItem) == folder:
             return
 
-        cfg.set(cfg.downloadFolder, folder)
+        cfg.set(cfgItem, folder)
         self.downloadFolderCard.setContent(folder)
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
         # music in the pc
-        self.downloadFolderCard.clicked.connect(
-            self.__onDownloadFolderCardClicked)
+        self.iconCard.clicked.connect(
+            self.__onBrowseCardClicked)
+        pass
 
 

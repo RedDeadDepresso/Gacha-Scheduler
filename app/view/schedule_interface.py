@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
+from ..components.timetable import TimeTable
 
 
 class ScheduleInterface(ScrollArea):
@@ -22,6 +23,7 @@ class ScheduleInterface(ScrollArea):
         super().__init__(parent=parent)
         self.scrollWidget = QWidget()
         self.expandLayout = ExpandLayout(self.scrollWidget)
+        self.timeTable = TimeTable(self)
 
         # schedule label
         self.scheduleLabel = QLabel(self.tr("Schedule"), self)
@@ -53,6 +55,8 @@ class ScheduleInterface(ScrollArea):
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
+        self.expandLayout.addWidget(self.timeTable)
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
+        pass
