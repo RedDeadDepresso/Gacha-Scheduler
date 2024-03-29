@@ -1,4 +1,9 @@
 {
+    "aaa": {
+        "GamePath": "C:/Users/mizan/Pictures/complex_example.py",
+        "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
+        "ScriptPath": "C:/Users/mizan/Pictures/ui copy.py"
+    },
     "Material": {
         "AcrylicBlurRadius": 40
     },
@@ -12,11 +17,11 @@
     },
     "Games": {
         "MessageBoxEnabled": true,
-        "ScriptDelay": 80,
+        "ScriptDelay": 60,
         "ToastEnabled": true
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Light"
+        "ThemeMode": "Dark"
     }
 }

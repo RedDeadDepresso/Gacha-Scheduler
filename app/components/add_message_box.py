@@ -1,10 +1,12 @@
 # coding:utf-8
+import os
 import sys
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QWidget, QHBoxLayout, QFileDialog
+from PySide6.QtCore import Qt, QPropertyAnimation
+from PySide6.QtGui import QPalette, QColor
+from PySide6.QtWidgets import QApplication, QDialog, QGraphicsOpacityEffect, QWidget, QHBoxLayout, QFileDialog
 
-from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit, PushButton, setTheme, Theme
+from qfluentwidgets import qconfig, MessageBoxBase, SubtitleLabel, LineEdit, PushButton, setTheme, Theme
 
 
 class AddMessageBox(MessageBoxBase):
@@ -48,50 +50,74 @@ class AddMessageBox(MessageBoxBase):
 
         # change the text of button
         self.yesButton.setText(self.tr('Save'))
+        self.yesButton.clicked.disconnect()
+        self.yesButton.clicked.connect(self.__onYesButtonClicked)
         self.cancelButton.setText(self.tr('Cancel'))
 
         self.widget.setMinimumWidth(500)
 
         # connect the file dialog buttons to methods
-        self.iconDialogButton.clicked.connect(lambda: self.openImageDialog(self.iconDialogButton))
-        self.gameDialogButton.clicked.connect(lambda: self.openExeDialog(self.gameDialogButton))
-        self.scriptDialogButton.clicked.connect(lambda: self.openExeDialog(self.scriptDialogButton))
+        self.iconDialogButton.clicked.connect(lambda: self.openImageDialog(self.iconLineEdit))
+        self.gameDialogButton.clicked.connect(lambda: self.openExeDialog(self.gameLineEdit))
+        self.scriptDialogButton.clicked.connect(lambda: self.openExeDialog(self.scriptLineEdit))
+
+    @property
+    def name(self):
+        return self.nameLineEdit.text()
+    
+    @property
+    def iconPath(self):
+        return self.iconLineEdit.text()
+    
+    @property
+    def gamePath(self):
+        return self.gameLineEdit.text()
+    
+    @property
+    def scriptPath(self):
+        return self.scriptLineEdit.text()
 
     def openImageDialog(self, lineEdit):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "All Files (*)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg)", options=options)
         if fileName:
             lineEdit.setText(fileName)  # update the second LineEdit with the selected file
 
     def openExeDialog(self, lineEdit):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "All Files (*)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py)", options=options)
         if fileName:
-            lineEdit.setText(fileName)  # update the second LineEdit with the selected file
+            lineEdit.setText(fileName)
 
+    def validateName(self):
+        if not qconfig.getGame(self.name):
+            self.nameLineEdit.setStyleSheet("border: 1px solid red;")
+            return True
+        else:
+            return False
+        
+    def validatePaths(self):
+        lineEdits = [self.iconLineEdit, self.gameLineEdit, self.scriptLineEdit]
+        valid = True
+        for lineEdit in lineEdits:
+            path = lineEdit.text()
+            if not os.path.exists(path):
+                lineEdit.setStyleSheet("border: 1px solid red;")
+                valid = False
+            else:
+                lineEdit.setStyleSheet("")
+                
+        return valid
 
-class Demo(QWidget):
+    def __onYesButtonClicked(self):
+        if self.validateName() and self.validatePaths():
+            self.accept()
+            self.accepted.emit()
 
-    def __init__(self):
-        super().__init__()
-        # setTheme(Theme.DARK)
-        # self.setStyleSheet('Demo{background:rgb(32,32,32)}')
+            qconfig.addGame(
+                self.name, 
+                self.iconPath, 
+                self.gamePath, 
+                self.scriptPath
+            )
 
-        self.hBxoLayout = QHBoxLayout(self)
-        self.button = PushButton('Test', self)
-
-        self.resize(600, 600)
-        self.hBxoLayout.addWidget(self.button, 0, Qt.AlignCenter)
-        self.button.clicked.connect(self.showDialog)
-
-    def showDialog(self):
-        w = AddMessageBox(self)
-        if w.exec():
-            print(w.nameLineEdit.text())
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    w = Demo()
-    w.show()
-    app.exec()

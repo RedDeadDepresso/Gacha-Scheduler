@@ -12,6 +12,8 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__, exceptionHandler)
 
+from app.common.game_config import GameConfig
+
 
 class Language(Enum):
     """ Language enumeration """
@@ -57,17 +59,25 @@ class Config(QConfig):
     # software update
     checkUpdateAtStartUp = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
 
-    def addItem(self, group, name, value):
-        item = ConfigItem(group, name)   
-        item.deserializeFromString(value) 
-        setattr(self.__class__, group+name, item)
-        return item
+    def __init__(self):
+        super().__init__()
+        self.games = {}
+        self.valid = {'IconPath', 'GamePath', 'ScriptPath'}
 
-    def getItem(self, group, name):
-        item = getattr(self.__class__, group+name)
-        return item
+    def __addItem(self, group, name, value):
+        if name in self.valid:
+            item = ConfigItem(group, name, '')   
+            item.value = value
+            setattr(self.__class__, group+name, item)
 
-    def removeItem(self, group, name):
+            gameConfig = self.games.get(group) 
+            if gameConfig is None:
+                gameConfig = GameConfig(group)
+                self.games[group] = gameConfig
+
+            gameConfig.__setattr__(name, value)
+
+    def __removeItem(self, group, name):
         """ remove a config item
 
         Parameters
@@ -122,21 +132,33 @@ def customload(self, file=None, config=None):
                 if items.get(key) is not None:
                     items[key].deserializeFrom(value)
                 else:
-                    self._cfg.addItem(group=v, name=key, value=value)
+                    self._cfg.__addItem(group=v, name=key, value=value)
 
     self.theme = self.get(self.themeMode)
 
 def addGame(self, gameName, iconPath, gamePath, scriptPath):
-    self._cfg.addItem(gameName, 'IconPath', iconPath)
-    self._cfg.addItem(gameName, 'GamePath', gamePath)
-    self._cfg.addItem(gameName, 'ScriptPath', scriptPath)
-    self.save()
+    try:
+        self._cfg.__addItem(gameName, 'IconPath', iconPath)
+        self._cfg.__addItem(gameName, 'GamePath', gamePath)
+        self._cfg.__addItem(gameName, 'ScriptPath', scriptPath)
+        self.save()
+    except Exception as e:
+        print(e)
 
-def removeGame(self, name):
-    keys = ['IconPath', 'GamePath', 'ScriptPath']
-    for key in keys:
-        self._cfg.remove(name, key)
-    self.save()
+def getGame(self, name):
+    return self._cfg.games.get(name)
+
+def removeGame(self, gameConfig):
+    try:
+        GameConfig.removeNotify(gameConfig)
+        name = gameConfig.name
+        self._cfg.games.pop(name)
+        self._cfg.__removeItem(name, 'IconPath')
+        self._cfg.__removeItem(name, 'GamePath')
+        self._cfg.__removeItem(name, 'ScriptPath')
+        self.save()
+    except Exception as e:
+        print(e)
 
 
 YEAR = 2023
@@ -154,6 +176,7 @@ EN_SUPPORT_URL = "https://qfluentwidgets.com/price/"
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
 qconfig.load = types.MethodType(customload, qconfig)
-qconfig.addGame = addGame
-qconfig.removeGame = removeGame
+qconfig.addGame = types.MethodType(addGame, qconfig)
+qconfig.getGame = types.MethodType(getGame, qconfig)
+qconfig.removeGame = types.MethodType(removeGame, qconfig)
 qconfig.load('app/config/config.json', cfg)
