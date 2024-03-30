@@ -216,8 +216,8 @@ class SettingInterface(ScrollArea):
         # games
 
         # personalization
-        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci), lazy=True))
-        self.themeColorCard.colorChanged.connect(lambda c: setThemeColor(c, lazy=True))
+        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci)))
+        self.themeColorCard.colorChanged.connect(lambda c: setThemeColor(c))
         self.micaCard.checkedChanged.connect(signalBus.micaEnableChanged)
 
         # about

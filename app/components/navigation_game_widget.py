@@ -36,8 +36,7 @@ class NavigationGameWidget(NavigationWidget):
         self.__connectSignalToSlot(gameConfig)
 
     def setNameLabel(self):
-        self.nameLabel = QLabel(self.name, self)
-        setFont(self.nameLabel)
+        self.nameLabel = BodyLabel(self.name, self)
         self.layout.addWidget(self.nameLabel)
 
     def setAvatarLabel(self, avatar: Union[str, QPixmap, QImage]):

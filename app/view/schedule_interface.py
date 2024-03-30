@@ -54,7 +54,7 @@ class ScheduleInterface(ScrollArea):
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
-        self.expandLayout.setContentsMargins(36, 10, 36, 0)
+        self.expandLayout.setContentsMargins(36, 100, 36, 0)
         self.expandLayout.addWidget(self.timeTable)
 
     def __connectSignalToSlot(self):

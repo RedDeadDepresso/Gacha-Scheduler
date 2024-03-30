@@ -5,6 +5,12 @@
         "Schedule": [],
         "ScriptPath": "C:/Scripts/MAA-v4.21.0-win-x64/MAA.exe"
     },
+    "Blue Archive": {
+        "GamePath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/gacha_scheduler.py",
+        "IconPath": "",
+        "Schedule": ["18:00", "19:00"],
+        "ScriptPath": ""
+    },
     "Material": {
         "AcrylicBlurRadius": 40
     },
@@ -18,11 +24,17 @@
     },
     "Games": {
         "MessageBoxEnabled": true,
-        "ScriptDelay": 390,
+        "ScriptDelay": 163,
         "ToastEnabled": true
+    },
+    "oooooooooooooooooooooooooooooooooooooooooo": {
+        "GamePath": "C:/Users/mizan/Pictures/complex_example.py",
+        "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
+        "Schedule": [],
+        "ScriptPath": ""
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Auto"
+        "ThemeMode": "Dark"
     }
 }
