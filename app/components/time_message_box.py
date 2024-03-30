@@ -18,7 +18,6 @@ class TimeMessageBox(MessageBoxBase):
         self.titleLabel = SubtitleLabel(self.tr('Edit Schedule'), self)
         self.gameComboBox = ComboBox(self)
         self.gameComboBox.addItems(list(cfg.games.keys()))
-        self.comboBox.currentTextChanged.connect(print)
         self.timeEdit = TimeEdit(self)
 
         # add widget to view layout
@@ -33,10 +32,13 @@ class TimeMessageBox(MessageBoxBase):
         self.cancelButton.setText(self.tr('Cancel'))
         self.widget.setMinimumWidth(500)
 
-        # connect the file dialog buttons to methods
-
-
     def __onYesButtonClicked(self):
+        game = self.gameComboBox.currentText()
+        time = self.timeEdit.text()
+        if game in cfg.games:
+            gameConfig = cfg.games[game]
+            gameConfig.schedule.value.append(time)
+            cfg.save()
+
         self.accept()
         self.accepted.emit()
-

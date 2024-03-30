@@ -14,6 +14,7 @@ from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, 
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
 from ..components.timetable import TimeTable
+from ..components.time_message_box import TimeMessageBox
 
 
 class ScheduleInterface(ScrollArea):
@@ -27,6 +28,15 @@ class ScheduleInterface(ScrollArea):
 
         # schedule label
         self.scheduleLabel = QLabel(self.tr("Schedule"), self)
+
+        self.scheduleGroup = SettingCardGroup(self.tr(''), self.scrollWidget)
+        self.addCard = PrimaryPushSettingCard(
+            self.tr('Add'),
+            FIF.INFO,
+            self.tr(''),
+            None,
+            self.scheduleGroup
+        )
 
         self.__initWidget()
 
@@ -51,12 +61,18 @@ class ScheduleInterface(ScrollArea):
         self.scheduleLabel.move(36, 30)
 
         # add cards to group
+        self.scheduleGroup.addSettingCard(self.addCard)
+        self.scheduleGroup.addSettingCard(self.timeTable)
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
-        self.expandLayout.setContentsMargins(36, 100, 36, 0)
-        self.expandLayout.addWidget(self.timeTable)
+        self.expandLayout.setContentsMargins(36, 0, 36, 0)
+        self.expandLayout.addWidget(self.scheduleGroup)
+
+    def showMessageBox(self):
+        w = TimeMessageBox(self)
+        w.exec()
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
-        pass
+        self.addCard.clicked.connect(self.showMessageBox)

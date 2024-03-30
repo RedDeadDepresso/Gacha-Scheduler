@@ -2,14 +2,11 @@
     "Arknights": {
         "GamePath": "C:/Program Files/BlueStacks_nxt/HD-Player.exe",
         "IconPath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/app/resource/images/arknights.png",
-        "Schedule": [],
+        "Schedule": [
+            "00:00",
+            "07:11"
+        ],
         "ScriptPath": "C:/Scripts/MAA-v4.21.0-win-x64/MAA.exe"
-    },
-    "Blue Archive": {
-        "GamePath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/gacha_scheduler.py",
-        "IconPath": "",
-        "Schedule": ["18:00", "19:00"],
-        "ScriptPath": ""
     },
     "Material": {
         "AcrylicBlurRadius": 40
@@ -30,7 +27,10 @@
     "oooooooooooooooooooooooooooooooooooooooooo": {
         "GamePath": "C:/Users/mizan/Pictures/complex_example.py",
         "IconPath": "C:/Users/mizan/Pictures/299506453-3407a4b6-2651-4379-9945-ded848190eff.png",
-        "Schedule": [],
+        "Schedule": [
+            "18:00",
+            "19:00"
+        ],
         "ScriptPath": ""
     },
     "QFluentWidgets": {
