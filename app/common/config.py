@@ -45,7 +45,7 @@ class Config(QConfig):
     # games
     toastEnabled = ConfigItem("Games", "ToastEnabled", True, BoolValidator())
     messageBoxEnabled = ConfigItem("Games", "MessageBoxEnabled", True, BoolValidator())
-    scriptDelay = RangeConfigItem("Games", "ScriptDelay", 30, RangeValidator(0, 600))
+    scriptDelay = ConfigItem("Games", "ScriptDelay", '00:30')
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())

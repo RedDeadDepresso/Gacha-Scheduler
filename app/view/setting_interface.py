@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
+from ..components.time_setting_card import TimeSettingCard
 
 
 class SettingInterface(ScrollArea):
@@ -43,7 +44,7 @@ class SettingInterface(ScrollArea):
             cfg.messageBoxEnabled,
             self.gamesGroup
         )
-        self.scriptCard = RangeSettingCard(
+        self.scriptCard = TimeSettingCard(
             cfg.scriptDelay,
             FIF.ROBOT,
             self.tr('Script Delay'),
