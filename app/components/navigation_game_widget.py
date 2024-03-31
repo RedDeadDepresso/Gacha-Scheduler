@@ -81,6 +81,7 @@ class NavigationGameWidget(NavigationWidget):
         button = PushButton('Yes')
         button.setFixedWidth(120)
         button.clicked.connect(lambda: cfg.removeGame(self.gameConfig))
+        button.clicked.connect(view.close)
         view.addWidget(button, align=Qt.AlignLeft)
 
         # adjust layout (optional)
@@ -89,7 +90,7 @@ class NavigationGameWidget(NavigationWidget):
         view.widgetLayout.addSpacing(5)
 
         # show view
-        Flyout.make(view, self.removeButton, self.window(), FlyoutAnimationType.SLIDE_RIGHT)
+        Flyout.make(view, self.removeButton, self.window(), FlyoutAnimationType.SLIDE_RIGHT, isDeleteOnClose=True)
 
     def __connectSignalToSlot(self, gameConfig):
         self.playButton.clicked.connect(lambda: subprocess.Popen(gameConfig.gamePath.value))

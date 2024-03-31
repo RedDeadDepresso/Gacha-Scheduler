@@ -7,12 +7,13 @@ from enum import Enum
 
 from pathlib import Path
 
-from PySide6.QtCore import QLocale
+from PySide6.QtCore import QLocale, Signal
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__, exceptionHandler)
 
 from app.common.game_config import GameConfig
+from app.common.signal_bus import signalBus
 
 
 class Language(Enum):
@@ -91,7 +92,7 @@ class Config(QConfig):
             if save:
                 self.save()
             self.games[name] = gameConfig
-            gameConfig.addNotify()
+            signalBus.addGameSignal.emit(gameConfig)
         except Exception as e:
             print(e)
 
@@ -100,6 +101,7 @@ class Config(QConfig):
 
     def removeGame(self, gameConfig):
         try:
+            signalBus.removeGameSignal.emit(gameConfig)
             name = gameConfig.name
             self.games.pop(name)
             self.__removeItem(name, 'IconPath')
@@ -107,7 +109,6 @@ class Config(QConfig):
             self.__removeItem(name, 'ScriptPath')
             self.__removeItem(name, 'Schedule')
             self.save()
-            gameConfig.removeNotify()
         except Exception as e:
             print(e)
         

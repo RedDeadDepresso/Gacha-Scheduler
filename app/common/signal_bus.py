@@ -1,6 +1,8 @@
 # coding: utf-8
 from PySide6.QtCore import QObject, Signal
 
+from app.common.game_config import GameConfig
+
 
 class SignalBus(QObject):
     """ Signal bus """
@@ -8,6 +10,8 @@ class SignalBus(QObject):
     switchToSampleCard = Signal(str, int)
     micaEnableChanged = Signal(bool)
     supportSignal = Signal()
+    addGameSignal = Signal(GameConfig)
+    removeGameSignal = Signal(GameConfig)
 
 
 signalBus = SignalBus()

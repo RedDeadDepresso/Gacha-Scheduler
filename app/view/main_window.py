@@ -26,7 +26,6 @@ class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
         self.initWindow()
-        GameConfig.observers.append(self)
 
         # create sub interface
         self.scheduleInterface = ScheduleInterface(self)
@@ -45,6 +44,8 @@ class MainWindow(FluentWindow):
 
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
+        signalBus.addGameSignal.connect(self.addGame)
+        signalBus.removeGameSignal.connect(self.removeGame)
 
     def initNavigation(self):
         # add navigation items
@@ -67,7 +68,7 @@ class MainWindow(FluentWindow):
         
         self.addSubInterface(
             self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
-
+        
     def initWindow(self):
         self.resize(960, 780)
         self.setMinimumWidth(760)
@@ -109,6 +110,10 @@ class MainWindow(FluentWindow):
             NavigationItemPosition.SCROLL
         )
         widget.editButton.clicked.connect(lambda checked=False, interface=interface: self.switchTo(interface))
+        gameConfig.interface = interface
+        gameConfig.navigationGameWidget = widget
 
     def removeGame(self, gameConfig):
-        pass
+        self.stackedWidget.setCurrentWidget(self.scheduleInterface)
+        self.navigationInterface.removeWidget(gameConfig.name)
+        self.stackedWidget.view.removeWidget(gameConfig.interface)

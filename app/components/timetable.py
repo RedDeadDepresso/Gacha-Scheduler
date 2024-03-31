@@ -14,7 +14,6 @@ class TimeTable(TableWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        GameConfig.observers.append(self)
 
         self.verticalHeader().hide()
         self.setBorderRadius(8)

@@ -2,7 +2,6 @@ from qfluentwidgets import ConfigItem
 
 
 class GameConfig:
-    observers = []
 
     def __init__(self, name, iconPath, gamePath, scriptPath, schedule=[]):
         self.name = name
@@ -18,10 +17,5 @@ class GameConfig:
         self.schedule = ConfigItem(self.name, "Schedule", [])
         self.schedule.value = schedule
 
-    def addNotify(self):
-        for observer in self.observers:
-            observer.addGame(self)
-
-    def removeNotify(self):
-        for observer in self.observers:
-            observer.removeGame(self)
+        self.navigationGameWidget = None
+        self.interface = None
