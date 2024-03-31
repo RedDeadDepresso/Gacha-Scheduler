@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt, QPropertyAnimation
 from PySide6.QtGui import QPalette, QColor
 from PySide6.QtWidgets import QApplication, QDialog, QGraphicsOpacityEffect, QWidget, QHBoxLayout, QFileDialog, QVBoxLayout
 
-from qfluentwidgets import ComboBox, TimeEdit, MessageBoxBase, SubtitleLabel, LineEdit, PushButton, setTheme, Theme
+from qfluentwidgets import ComboBox, TimePicker, MessageBoxBase, SubtitleLabel, LineEdit, PushButton, setTheme, Theme
 from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
 
 
@@ -18,12 +18,12 @@ class TimeMessageBox(MessageBoxBase):
         self.titleLabel = SubtitleLabel(self.tr('Edit Schedule'), self)
         self.gameComboBox = ComboBox(self)
         self.gameComboBox.addItems(list(cfg.games.keys()))
-        self.timeEdit = TimeEdit(self)
+        self.timePicker = TimePicker(self, showSeconds=True)
 
         # add widget to view layout
         self.viewLayout.addWidget(self.titleLabel)
         self.viewLayout.addWidget(self.gameComboBox)
-        self.viewLayout.addWidget(self.timeEdit)
+        self.viewLayout.addWidget(self.timePicker)
 
         # change the text of button
         self.yesButton.setText(self.tr('Save'))
@@ -34,11 +34,7 @@ class TimeMessageBox(MessageBoxBase):
 
     def __onYesButtonClicked(self):
         game = self.gameComboBox.currentText()
-        time = self.timeEdit.text()
-        if game in cfg.games:
-            gameConfig = cfg.games[game]
-            gameConfig.schedule.value.append(time)
-            cfg.save()
-
+        time = self.timePicker.getTime().toString()
+        cfg.addSchedule(time, game)
         self.accept()
         self.accepted.emit()

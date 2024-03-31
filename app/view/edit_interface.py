@@ -6,9 +6,11 @@ from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSetti
                             setTheme, setThemeColor, RangeSettingCard, isDarkTheme)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
-from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths
+from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths, Slot
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
+
+from app.common.game_config import GameConfig
 
 from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
 from ..common.signal_bus import signalBus
@@ -95,6 +97,7 @@ class EditInterface(ScrollArea):
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         self.expandLayout.addWidget(self.editGroup)
 
+    @Slot(GameConfig, PushSettingCard)
     def openImageDialog(self, item, card):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg)", options=options)
@@ -104,6 +107,7 @@ class EditInterface(ScrollArea):
         cfg.set(item, fileName)
         card.setContent(fileName)
 
+    @Slot(GameConfig, PushSettingCard)
     def openExeDialog(self, item, card):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py)", options=options)

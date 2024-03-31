@@ -1,7 +1,10 @@
 # coding:utf-8
+import bisect
 import json
 import sys
 import types
+
+from datetime import datetime
 
 from enum import Enum
 
@@ -13,6 +16,7 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__, exceptionHandler)
 
 from app.common.game_config import GameConfig
+from app.common.game_timer import GameTimer
 from app.common.signal_bus import signalBus
 
 
@@ -35,6 +39,39 @@ class LanguageSerializer(ConfigSerializer):
         return Language(QLocale(value)) if value != "Auto" else Language.AUTO
 
 
+class ScheduleSerializer(ConfigSerializer):
+    def game_valid(self, input_str):
+        return input_str in cfg.games
+    
+    def is_time_format(self, input_str):
+        try:
+            datetime.strptime(input_str, '%H:%M:%S')
+            return True
+        except ValueError:
+            return False
+    
+    def validate(self, element):
+        if isinstance(element, list) and len(element) == 2:
+            if self.is_time_format(element[0]) and self.game_valid(element[1]):
+                time = element[0]
+                gameConfig = cfg.games[element[1]]
+                GameTimer(time, gameConfig)
+                return True
+        return False
+
+    def serialize(self, value):
+        return value
+
+    def deserialize(self, value: list[str, str]):
+        if isinstance(value, list) and len(value) > 0:
+            return list(filter(self.validate, value)).sort()
+        else: 
+            return []
+        
+    def correct(self, value):
+        return value
+
+
 def isWin11():
     return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
 
@@ -46,6 +83,7 @@ class Config(QConfig):
     toastEnabled = ConfigItem("Games", "ToastEnabled", True, BoolValidator())
     messageBoxEnabled = ConfigItem("Games", "MessageBoxEnabled", True, BoolValidator())
     scriptDelay = ConfigItem("Games", "ScriptDelay", '00:30')
+    schedule = ConfigItem("Games", "Schedule", [], ScheduleSerializer())
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
@@ -63,12 +101,10 @@ class Config(QConfig):
     def __init__(self):
         super().__init__()
         self.games = {}
-        self.valid = {'IconPath', 'GamePath', 'ScriptPath', 'Schedule'}
 
     def __addItem(self, group, name, value):
-        if name in self.valid:
-            item_name = group + name
-            setattr(self.__class__, item_name, value)
+        item_name = group + name
+        setattr(self.__class__, item_name, value)
 
     def __removeItem(self, group, name):
         """ remove a config item
@@ -82,13 +118,12 @@ class Config(QConfig):
         item_name = group + name
         delattr(self.__class__, item_name)
 
-    def addGame(self, name, iconPath, gamePath, scriptPath, schedule=[], save=True):
+    def addGame(self, name, iconPath, gamePath, scriptPath, save=True):
         try:
-            gameConfig = GameConfig(name, iconPath, gamePath, scriptPath, schedule)
+            gameConfig = GameConfig(name, iconPath, gamePath, scriptPath)
             self.__addItem(name, 'IconPath', gameConfig.iconPath)
             self.__addItem(name, 'GamePath', gameConfig.gamePath)
             self.__addItem(name, 'ScriptPath', gameConfig.scriptPath)
-            self.__addItem(name, 'Schedule', gameConfig.schedule)
             if save:
                 self.save()
             self.games[name] = gameConfig
@@ -101,18 +136,33 @@ class Config(QConfig):
 
     def removeGame(self, gameConfig):
         try:
+            gameConfig.stopTimers.emit()
             signalBus.removeGameSignal.emit(gameConfig)
             name = gameConfig.name
             self.games.pop(name)
             self.__removeItem(name, 'IconPath')
             self.__removeItem(name, 'GamePath')
             self.__removeItem(name, 'ScriptPath')
-            self.__removeItem(name, 'Schedule')
             self.save()
         except Exception as e:
             print(e)
-        
-    
+
+    def addSchedule(self, time, gameName):
+        if gameName in self.games:
+            entry = [time, gameName]
+            bisect.insort(self.__class__.schedule.value, entry, key=lambda x: x[0])
+            gameConfig = self.games[gameName]
+            GameTimer(time, gameConfig)
+            self.save()
+            return True
+        return False
+
+    def removeSchedule(self, time, game):
+        entry = [time, game]
+        self.__class__.schedule.value.remove(entry)
+        self.save()
+
+
 def customload(self, file=None, config=None):
     """ load config
 
@@ -145,7 +195,8 @@ def customload(self, file=None, config=None):
             items[item.key] = item
 
     # update the value of config item
-    games_settings = {'IconPath', 'GamePath', 'ScriptPath', 'Schedule'}
+    games_settings = {'IconPath', 'GamePath', 'ScriptPath'}
+    schedule_exists = False
     for k, v in cfg.items():
         if not isinstance(v, dict) and items.get(k) is not None:
             items[k].deserializeFrom(v)
@@ -156,16 +207,21 @@ def customload(self, file=None, config=None):
                                   iconPath=v['IconPath'], 
                                   gamePath=v['GamePath'], 
                                   scriptPath=v['ScriptPath'],
-                                  schedule=v['Schedule'],
                                   save=False
                                   )
             
             else:
                 for key, value in v.items():
+                    if key == 'Games' and value == 'Schedule':
+                        schedule_exists = True
+                        continue
                     key = k + "." + key
                     if items.get(key) is not None:
                         items[key].deserializeFrom(value)
 
+    if schedule_exists:
+        items['Games.Schedule'].deserializeFrom(cfg['Games']['Schedule'])
+    
     self.theme = self.get(self.themeMode)
 
 

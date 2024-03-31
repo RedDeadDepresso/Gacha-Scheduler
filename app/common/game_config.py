@@ -1,9 +1,14 @@
+from PySide6.QtCore import QObject, Signal
+
 from qfluentwidgets import ConfigItem
 
 
-class GameConfig:
+class GameConfig(QObject):
+    stopTimers = Signal()
 
-    def __init__(self, name, iconPath, gamePath, scriptPath, schedule=[]):
+    def __init__(self, name, iconPath, gamePath, scriptPath):
+        super().__init__()
+
         self.name = name
         self.iconPath = ConfigItem(self.name, "IconPath", "")
         self.iconPath.value = iconPath
@@ -13,9 +18,6 @@ class GameConfig:
 
         self.scriptPath = ConfigItem(self.name, "ScriptPath", "")
         self.scriptPath.value = scriptPath
-
-        self.schedule = ConfigItem(self.name, "Schedule", [])
-        self.schedule.value = schedule
 
         self.navigationGameWidget = None
         self.interface = None

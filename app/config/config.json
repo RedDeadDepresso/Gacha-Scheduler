@@ -10,13 +10,28 @@
         "Language": "en_US",
         "MicaEnabled": true
     },
+    "ioo": {
+        "GamePath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/gacha_scheduler.py",
+        "IconPath": "",
+        "ScriptPath": ""
+    },
     "Games": {
         "MessageBoxEnabled": true,
+        "Schedule": [
+            [
+                "00:22:29",
+                "ioo"
+            ],
+            [
+                "00:23:48",
+                "ioo"
+            ]
+        ],
         "ScriptDelay": "00:00:30",
         "ToastEnabled": true
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Auto"
+        "ThemeMode": "Dark"
     }
 }

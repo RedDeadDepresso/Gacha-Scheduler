@@ -1,6 +1,6 @@
 # coding: utf-8
 from typing import List
-from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize
+from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize, Slot
 from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget
 
@@ -97,6 +97,7 @@ class MainWindow(FluentWindow):
         w = AddMessageBox(self)
         w.exec()
 
+    @Slot(GameConfig)
     def addGame(self, gameConfig):
         interface = EditInterface(gameConfig, self)
         interface.setProperty("isStackedTransparent", False)
@@ -113,6 +114,7 @@ class MainWindow(FluentWindow):
         gameConfig.interface = interface
         gameConfig.navigationGameWidget = widget
 
+    @Slot(GameConfig)
     def removeGame(self, gameConfig):
         self.stackedWidget.setCurrentWidget(self.scheduleInterface)
         self.navigationInterface.removeWidget(gameConfig.name)

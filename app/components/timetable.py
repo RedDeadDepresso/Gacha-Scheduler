@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, 
 
 from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView, TableItemDelegate, setCustomStyleSheet
 from ..common.config import cfg
-from ..common.game_config import GameConfig
+from ..common.signal_bus import signalBus
 
 
 class TimeTable(TableWidget):
@@ -29,19 +29,14 @@ class TimeTable(TableWidget):
         pass
 
     def removeGame(self, gameConfig):
-        self.setTable()
+        pass
 
     def insertGame(self):
         pass
 
     def setTable(self):
-        temp = []
-        for game, gameConfig in cfg.games.items():
-            for time in gameConfig.schedule.value:
-                temp.append((time, game))
-
-        temp.sort(key=lambda x: x[0])
-        self.setRowCount(len(temp))
-        for row, info in enumerate(temp):
+        self.clear()
+        self.setRowCount(len(cfg.schedule.value))
+        for row, info in enumerate(cfg.schedule.value):
             for col in range(2):
                 self.setItem(row, col, QTableWidgetItem(info[col]))
