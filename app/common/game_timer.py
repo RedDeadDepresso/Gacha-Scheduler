@@ -1,14 +1,19 @@
 from datetime import datetime, timedelta
 from PySide6.QtCore import QTimer
 
-class GameTimer:
-    def __init__(self, time, gameConfig):
-        self.time = datetime.strptime(time, "%H:%M:%S")
-        self.timer = QTimer()
+from ..common.signal_bus import signalBus
 
-        gameConfig.stopTimers.connect(self.timer.stop)
-        self.timer.timeout.connect(self.resetTimer)
-        self.resetTimer()
+
+class GameTimer(QTimer):
+    def __init__(self, time, gameConfig):
+        super().__init__()
+
+        self.gameConfig = gameConfig
+        self.time = datetime.strptime(time, "%H:%M:%S")
+
+        gameConfig.stopTimers.connect(self.stop)
+        # self.timeout.connect(self.resetTimer)
+        self.setInterval(self.diffMilliseconds)
 
     @property
     def diffMilliseconds(self):
@@ -21,8 +26,13 @@ class GameTimer:
         difference = timeObject - now
         diffMilliseconds = difference.total_seconds() * 1000
 
-        return diffMilliseconds
+        return diffMilliseconds        
     
-    def resetTimer(self):
-        self.timer.setInterval(self.diffMilliseconds)
-        self.timer.start()
+    def sendThreadSignal(self):
+        print("Sending signal")
+        signalBus.createThreadSignal.emit(self.gameConfig)
+    
+    # def resetTimer(self):
+    #     self.sendThreadSignal()
+    #     self.setInterval(self.diffMilliseconds)
+        # self.start()

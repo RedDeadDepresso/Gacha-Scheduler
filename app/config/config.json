@@ -1,8 +1,8 @@
 {
-    "aaaa": {
-        "GamePath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/gacha_scheduler.py",
-        "IconPath": "",
-        "ScriptPath": ""
+    "Arknights": {
+        "GamePath": "C:/Program Files/BlueStacks_nxt/HD-Player.exe",
+        "IconPath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/app/resource/images/arknights.png",
+        "ScriptPath": "C:/Scripts/MAA-v4.21.0-win-x64/MAA.exe"
     },
     "Material": {
         "AcrylicBlurRadius": 40
@@ -16,10 +16,39 @@
         "MicaEnabled": true
     },
     "Games": {
-        "MessageBoxEnabled": true,
-        "Schedule": [],
-        "ScriptDelay": "00:00:30",
-        "ToastEnabled": true
+        "MessageBoxEnabled": false,
+        "Schedule": [
+            [
+                "15:50:21",
+                "Arknights"
+            ],
+            [
+                "15:53:53",
+                "Arknights"
+            ],
+            [
+                "15:54:41",
+                "Arknights"
+            ],
+            [
+                "15:55:18",
+                "Arknights"
+            ],
+            [
+                "16:05:41",
+                "Arknights"
+            ],
+            [
+                "16:17:42",
+                "Arknights"
+            ],
+            [
+                "18:52:42",
+                "Arknights"
+            ]
+        ],
+        "ScriptDelay": "00:00:00",
+        "ToastEnabled": false
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",

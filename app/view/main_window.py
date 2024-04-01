@@ -1,6 +1,6 @@
 # coding: utf-8
 from typing import List
-from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize, Slot
+from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize, Slot, QThreadPool
 from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget
 
@@ -13,6 +13,7 @@ from .schedule_interface import ScheduleInterface
 from .setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
 from ..common.game_config import GameConfig
+from ..common.game_runner import GameRunner
 from ..common.icon import Icon
 from ..common.signal_bus import signalBus
 from ..common.translator import Translator
@@ -26,6 +27,7 @@ class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
         self.initWindow()
+        self.threadPool = QThreadPool() 
 
         # create sub interface
         self.scheduleInterface = ScheduleInterface(self)
@@ -46,6 +48,7 @@ class MainWindow(FluentWindow):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
         signalBus.addGameSignal.connect(self.addGame)
         signalBus.removeGameSignal.connect(self.removeGame)
+        signalBus.createThreadSignal.connect(self.createThread)
 
     def initNavigation(self):
         # add navigation items
@@ -119,3 +122,10 @@ class MainWindow(FluentWindow):
         self.stackedWidget.setCurrentWidget(self.scheduleInterface)
         self.navigationInterface.removeWidget(gameConfig.name)
         self.stackedWidget.view.removeWidget(gameConfig.interface)
+
+    @Slot(GameConfig)
+    def createThread(self, gameConfig):
+        print("Creating thread")
+        gameRunner = GameRunner(gameConfig)
+        self.threadPool.start(gameRunner)
+    

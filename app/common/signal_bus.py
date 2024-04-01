@@ -17,5 +17,7 @@ class SignalBus(QObject):
     addScheduleSignal = Signal()
     removeScheduleSignal = Signal()
 
+    createThreadSignal = Signal(GameConfig)
+    
 
 signalBus = SignalBus()

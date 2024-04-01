@@ -40,9 +40,7 @@ class LanguageSerializer(ConfigSerializer):
 
 
 class ScheduleSerializer(ConfigSerializer):
-    def game_valid(self, input_str):
-        return input_str in cfg.games
-    
+
     def is_time_format(self, input_str):
         try:
             datetime.strptime(input_str, '%H:%M:%S')
@@ -52,24 +50,16 @@ class ScheduleSerializer(ConfigSerializer):
     
     def validate(self, element):
         if isinstance(element, list) and len(element) == 2:
-            if self.is_time_format(element[0]) and self.game_valid(element[1]):
-                time = element[0]
-                gameConfig = cfg.games[element[1]]
-                GameTimer(time, gameConfig)
-                return True
-        return False
-
-    def serialize(self, value):
-        return value
+            if self.is_time_format(element[0]):
+                cfg.addSchedule(element[0], element[1])
 
     def deserialize(self, value: list[str, str]):
         if isinstance(value, list) and len(value) > 0:
-            return [x for x in value if self.validate(x)].sort()
+            for element in value:
+                self.validate(element)
+            return Config.schedule.value
         else: 
             return []
-        
-    def correct(self, value):
-        return value
 
 
 def isWin11():
@@ -83,7 +73,7 @@ class Config(QConfig):
     toastEnabled = ConfigItem("Games", "ToastEnabled", True, BoolValidator())
     messageBoxEnabled = ConfigItem("Games", "MessageBoxEnabled", True, BoolValidator())
     scriptDelay = ConfigItem("Games", "ScriptDelay", '00:30')
-    schedule = ConfigItem("Games", "Schedule", [], ScheduleSerializer())
+    schedule = ConfigItem("Games", "Schedule", [], serializer=ScheduleSerializer())
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
@@ -153,7 +143,7 @@ class Config(QConfig):
             entry = [time, gameName]
             bisect.insort(self.__class__.schedule.value, entry, key=lambda x: x[0])
             gameConfig = self.games[gameName]
-            GameTimer(time, gameConfig)
+            GameTimer(time, gameConfig).start()
             self.save()
             signalBus.addScheduleSignal.emit()
             return True
@@ -215,7 +205,7 @@ def customload(self, file=None, config=None):
             
             else:
                 for key, value in v.items():
-                    if key == 'Games' and value == 'Schedule':
+                    if k == 'Games' and key == 'Schedule':
                         schedule_exists = True
                         continue
                     key = k + "." + key
