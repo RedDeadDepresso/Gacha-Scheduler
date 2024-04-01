@@ -35,6 +35,7 @@ class TimeMessageBox(MessageBoxBase):
     def __onYesButtonClicked(self):
         game = self.gameComboBox.currentText()
         time = self.timePicker.getTime().toString()
-        cfg.addSchedule(time, game)
-        self.accept()
-        self.accepted.emit()
+        if time:
+            cfg.addSchedule(time, game)
+            self.accept()
+            self.accepted.emit()

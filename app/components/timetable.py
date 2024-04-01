@@ -2,8 +2,8 @@
 import sys
 
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, QHeaderView
+from PySide6.QtGui import QPalette, QAction
+from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, QHeaderView, QMenu
 
 from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView, TableItemDelegate, setCustomStyleSheet
 from ..common.config import cfg
@@ -26,6 +26,24 @@ class TimeTable(TableWidget):
 
         self.setColumnCount(2)
         self.setTable()
+
+    def contextMenuEvent(self, event):
+        contextMenu = QMenu(self)
+
+        remove = QAction("Remove", self)
+        contextMenu.addAction(remove)
+
+        # Get the row number of the right-clicked cell
+        row = self.rowAt(event.pos().y())
+        # Get the value of the first cell in the clicked row
+        time = self.item(row, 0).text()
+        # Get the value of the second cell in the clicked row
+        game = self.item(row, 1).text()
+
+        # Now you can use the values in your slots
+        remove.triggered.connect(lambda: cfg.removeSchedule(time, game))
+
+        contextMenu.exec_(event.globalPos())
 
     def setTable(self):
         self.clear()

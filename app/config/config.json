@@ -1,4 +1,9 @@
 {
+    "aaaa": {
+        "GamePath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/gacha_scheduler.py",
+        "IconPath": "",
+        "ScriptPath": ""
+    },
     "Material": {
         "AcrylicBlurRadius": 40
     },
