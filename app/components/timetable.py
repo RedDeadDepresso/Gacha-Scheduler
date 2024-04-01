@@ -15,6 +15,7 @@ class TimeTable(TableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        cfg.loadSchedule()
         signalBus.addScheduleSignal.connect(self.setTable)
         signalBus.removeScheduleSignal.connect(self.setTable)
         signalBus.removeGameSignal.connect(self.setTable)

@@ -48,10 +48,10 @@ class GameRunner(QRunnable):
             args = shortcut.Arguments
             args = args.split(" ")
             if args == [""]:
-                args = ''
+                args = []
         else:
             # No .lnk file, so there are no additional arguments
-            args = ''
+            args = []
         
         return programPath, args
     
@@ -84,17 +84,15 @@ class GameRunner(QRunnable):
             subprocess.Popen(['python', path], shell=True)
         else:
             path, args = self.extractArgs(path)
-            subprocess.Popen([path, args], shell=True)
+            subprocess.Popen([path] + args, shell=True)
 
     def run(self):
-        print("Running")
         if os.path.exists(self.gamePath):
-            print("Exist")
-            if cfg.toastEnabled:
+            if cfg.toastEnabled.value:
                 self.showToast()
                 time.sleep(30)
 
-            if cfg.messageBoxEnabled and not self.showMessageBox():
+            if cfg.messageBoxEnabled.value and not self.showMessageBox():
                 return
             
             self.openProgram(self.gamePath)

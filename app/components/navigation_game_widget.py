@@ -17,7 +17,10 @@ from qfluentwidgets.common.icon import FluentIcon as FIF
 from qfluentwidgets.common.font import setFont
 from qfluentwidgets.components.navigation import NavigationAvatarWidget, NavigationWidget
 
+from ..common.signal_bus import signalBus
 from ..common.config import cfg
+from ..common.game_runner import GameRunner
+
 
 class NavigationGameWidget(NavigationWidget):
     """ Avatar widget """
@@ -93,10 +96,7 @@ class NavigationGameWidget(NavigationWidget):
         Flyout.make(view, self.removeButton, self.window(), FlyoutAnimationType.SLIDE_RIGHT, isDeleteOnClose=True)
 
     def __connectSignalToSlot(self, gameConfig):
-        self.playButton.clicked.connect(lambda: subprocess.Popen(gameConfig.gamePath.value))
-        self.scriptButton.clicked.connect(
-            lambda: (subprocess.Popen(gameConfig.gamePath.value), 
-                     subprocess.Popen(gameConfig.scriptPath.value))
-        )
+        self.playButton.clicked.connect(lambda: GameRunner(gameConfig).openProgram(gameConfig.gamePath.value))
+        self.scriptButton.clicked.connect(lambda: signalBus.createThreadSignal.emit(gameConfig))
         self.removeButton.clicked.connect(self.showRemoveFlyout)
         

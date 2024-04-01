@@ -12,8 +12,9 @@ class GameTimer(QTimer):
         self.time = datetime.strptime(time, "%H:%M:%S")
 
         gameConfig.stopTimers.connect(self.stop)
-        # self.timeout.connect(self.resetTimer)
+        self.timeout.connect(self.resetTimer)
         self.setInterval(self.diffMilliseconds)
+        self.start()
 
     @property
     def diffMilliseconds(self):
@@ -32,7 +33,7 @@ class GameTimer(QTimer):
         print("Sending signal")
         signalBus.createThreadSignal.emit(self.gameConfig)
     
-    # def resetTimer(self):
-    #     self.sendThreadSignal()
-    #     self.setInterval(self.diffMilliseconds)
-        # self.start()
+    def resetTimer(self):
+        self.sendThreadSignal()
+        self.setInterval(self.diffMilliseconds)
+        self.start()

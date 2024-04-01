@@ -39,26 +39,28 @@ class LanguageSerializer(ConfigSerializer):
         return Language(QLocale(value)) if value != "Auto" else Language.AUTO
 
 
-class ScheduleSerializer(ConfigSerializer):
-
-    def is_time_format(self, input_str):
+class ScheduleSerializer:
+                
+    def isTime(self, string):
         try:
-            datetime.strptime(input_str, '%H:%M:%S')
+            datetime.strptime(string, '%H:%M:%S')
             return True
         except ValueError:
             return False
+        
+    def isGame(self, string):
+        return string in cfg.games
     
     def validate(self, element):
         if isinstance(element, list) and len(element) == 2:
-            if self.is_time_format(element[0]):
-                cfg.addSchedule(element[0], element[1])
-
-    def deserialize(self, value: list[str, str]):
+            if self.isTime(element[0]) and self.isGame(element[1]):
+                return True
+        return False
+                                                       
+    def deserialize(self, value):
         if isinstance(value, list) and len(value) > 0:
-            for element in value:
-                self.validate(element)
-            return Config.schedule.value
-        else: 
+            return [x for x in value if self.validate(x)]
+        else:
             return []
 
 
@@ -73,7 +75,7 @@ class Config(QConfig):
     toastEnabled = ConfigItem("Games", "ToastEnabled", True, BoolValidator())
     messageBoxEnabled = ConfigItem("Games", "MessageBoxEnabled", True, BoolValidator())
     scriptDelay = ConfigItem("Games", "ScriptDelay", '00:30')
-    schedule = ConfigItem("Games", "Schedule", [], serializer=ScheduleSerializer())
+    schedule = ConfigItem("Games", "Schedule", [])
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
@@ -91,6 +93,7 @@ class Config(QConfig):
     def __init__(self):
         super().__init__()
         self.games = {}
+        self.timers = set()
 
     def __addItem(self, group, name, value):
         item_name = group + name
@@ -107,6 +110,10 @@ class Config(QConfig):
         # Check if the item exists
         item_name = group + name
         delattr(self.__class__, item_name)
+
+    def loadSchedule(self):
+        serializer = ScheduleSerializer()
+        Config.schedule.value = serializer.deserialize(Config.schedule.value)
 
     def addGame(self, name, iconPath, gamePath, scriptPath, save=True):
         try:
@@ -143,7 +150,8 @@ class Config(QConfig):
             entry = [time, gameName]
             bisect.insort(self.__class__.schedule.value, entry, key=lambda x: x[0])
             gameConfig = self.games[gameName]
-            GameTimer(time, gameConfig).start()
+            timer = GameTimer(time, gameConfig)
+            self.timers.add(timer)
             self.save()
             signalBus.addScheduleSignal.emit()
             return True
@@ -189,7 +197,6 @@ def customload(self, file=None, config=None):
 
     # update the value of config item
     games_settings = {'IconPath', 'GamePath', 'ScriptPath'}
-    schedule_exists = False
     for k, v in cfg.items():
         if not isinstance(v, dict) and items.get(k) is not None:
             items[k].deserializeFrom(v)
@@ -205,15 +212,10 @@ def customload(self, file=None, config=None):
             
             else:
                 for key, value in v.items():
-                    if k == 'Games' and key == 'Schedule':
-                        schedule_exists = True
-                        continue
                     key = k + "." + key
                     if items.get(key) is not None:
                         items[key].deserializeFrom(value)
 
-    if schedule_exists:
-        items['Games.Schedule'].deserializeFrom(cfg['Games']['Schedule'])
     
     self.theme = self.get(self.themeMode)
 

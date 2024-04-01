@@ -1,8 +1,18 @@
 {
     "Arknights": {
-        "GamePath": "C:/Program Files/BlueStacks_nxt/HD-Player.exe",
+        "GamePath": "C:/Users/mizan/Desktop/Arknights - Arknights.lnk",
         "IconPath": "C:/Users/mizan/Documents/GitHub/Gacha-Scheduler/app/resource/images/arknights.png",
         "ScriptPath": "C:/Scripts/MAA-v4.21.0-win-x64/MAA.exe"
+    },
+    "Azur Lane": {
+        "GamePath": "C:/Program Files/BlueStacks_nxt/HD-Player.exe",
+        "IconPath": "",
+        "ScriptPath": "C:/Scripts/AzurLaneAutoScript/Alas.exe"
+    },
+    "Blue Archive": {
+        "GamePath": "D:/LDPlayer/LDPlayer9/dnplayer.exe",
+        "IconPath": "",
+        "ScriptPath": "C:/Scripts/ArisuAutoSweeper/aas.exe"
     },
     "Material": {
         "AcrylicBlurRadius": 40
@@ -19,31 +29,15 @@
         "MessageBoxEnabled": false,
         "Schedule": [
             [
-                "15:50:21",
+                "23:06:54",
                 "Arknights"
             ],
             [
-                "15:53:53",
+                "23:46:46",
                 "Arknights"
             ],
             [
-                "15:54:41",
-                "Arknights"
-            ],
-            [
-                "15:55:18",
-                "Arknights"
-            ],
-            [
-                "16:05:41",
-                "Arknights"
-            ],
-            [
-                "16:17:42",
-                "Arknights"
-            ],
-            [
-                "18:52:42",
+                "23:47:50",
                 "Arknights"
             ]
         ],
@@ -52,6 +46,6 @@
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Light"
+        "ThemeMode": "Dark"
     }
 }
