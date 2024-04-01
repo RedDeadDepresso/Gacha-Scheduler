@@ -15,28 +15,19 @@ from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
 from ..components.timetable import TimeTable
 from ..components.time_message_box import TimeMessageBox
+from qfluentwidgets import PushButton
 
+from PySide6.QtWidgets import QVBoxLayout
 
 class ScheduleInterface(ScrollArea):
     """ Schedule interface """
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.scrollWidget = QWidget()
-        self.expandLayout = ExpandLayout(self.scrollWidget)
-        self.timeTable = TimeTable(self)
-
         # schedule label
         self.scheduleLabel = QLabel(self.tr("Schedule"), self)
-
-        self.scheduleGroup = SettingCardGroup(self.tr(''), self.scrollWidget)
-        self.addCard = PrimaryPushSettingCard(
-            self.tr('Add'),
-            FIF.INFO,
-            self.tr(''),
-            None,
-            self.scheduleGroup
-        )
+        self.button = PushButton(self.tr("Add"), self)
+        self.timeTable = TimeTable(self)
 
         self.__initWidget()
 
@@ -44,12 +35,10 @@ class ScheduleInterface(ScrollArea):
         self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setViewportMargins(0, 80, 0, 20)
-        self.setWidget(self.scrollWidget)
         self.setWidgetResizable(True)
         self.setObjectName('scheduleInterface')
 
         # initialize style sheet
-        self.scrollWidget.setObjectName('scrollWidget')
         self.scheduleLabel.setObjectName('settingLabel')
         StyleSheet.SETTING_INTERFACE.apply(self)
 
@@ -58,16 +47,13 @@ class ScheduleInterface(ScrollArea):
         self.__connectSignalToSlot()
 
     def __initLayout(self):
-        self.scheduleLabel.move(36, 30)
-
-        # add cards to group
-        self.scheduleGroup.addSettingCard(self.addCard)
-        self.scheduleGroup.addSettingCard(self.timeTable)
-
-        # add setting card group to layout
-        self.expandLayout.setSpacing(28)
-        self.expandLayout.setContentsMargins(36, 0, 36, 0)
-        self.expandLayout.addWidget(self.scheduleGroup)
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.scheduleLabel)
+        layout.addWidget(self.button)
+        layout.addWidget(self.timeTable)
+        layout.setStretchFactor(self.timeTable, 1)
+        layout.setContentsMargins(36, 30, 30, 36)
+        self.setLayout(layout)
 
     def showMessageBox(self):
         w = TimeMessageBox(self)
@@ -75,4 +61,4 @@ class ScheduleInterface(ScrollArea):
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
-        self.addCard.clicked.connect(self.showMessageBox)
+        self.button.clicked.connect(self.showMessageBox)

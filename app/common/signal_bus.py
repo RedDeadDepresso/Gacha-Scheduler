@@ -10,8 +10,12 @@ class SignalBus(QObject):
     switchToSampleCard = Signal(str, int)
     micaEnableChanged = Signal(bool)
     supportSignal = Signal()
+
     addGameSignal = Signal(GameConfig)
     removeGameSignal = Signal(GameConfig)
+    
+    addScheduleSignal = Signal()
+    removeScheduleSignal = Signal()
 
 
 signalBus = SignalBus()

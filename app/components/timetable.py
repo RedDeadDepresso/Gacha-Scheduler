@@ -3,7 +3,7 @@ import sys
 
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QStyleOptionViewItem, QTableWidget, QTableWidgetItem, QWidget, QHBoxLayout, QHeaderView
 
 from qfluentwidgets import TableWidget, isDarkTheme, setTheme, Theme, TableView, TableItemDelegate, setCustomStyleSheet
 from ..common.config import cfg
@@ -15,28 +15,27 @@ class TimeTable(TableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        signalBus.addScheduleSignal.connect(self.setTable)
+        signalBus.removeScheduleSignal.connect(self.setTable)
+        signalBus.removeGameSignal.connect(self.setTable)
+
         self.verticalHeader().hide()
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.setBorderRadius(8)
         self.setBorderVisible(True)
 
         self.setColumnCount(2)
-        self.setHorizontalHeaderLabels([
-            self.tr('Time'), self.tr('Game')
-        ])
         self.setTable()
-
-    def addGame(self, gameConfig):
-        pass
-
-    def removeGame(self, gameConfig):
-        pass
-
-    def insertGame(self):
-        pass
 
     def setTable(self):
         self.clear()
+        self.setHorizontalHeaderLabels([
+            self.tr('Time'), self.tr('Game')
+        ])
         self.setRowCount(len(cfg.schedule.value))
         for row, info in enumerate(cfg.schedule.value):
             for col in range(2):
-                self.setItem(row, col, QTableWidgetItem(info[col]))
+                item = QTableWidgetItem(info[col])
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable) 
+                self.setItem(row, col, item)
+

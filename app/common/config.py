@@ -64,7 +64,7 @@ class ScheduleSerializer(ConfigSerializer):
 
     def deserialize(self, value: list[str, str]):
         if isinstance(value, list) and len(value) > 0:
-            return list(filter(self.validate, value)).sort()
+            return [x for x in value if self.validate(x)].sort()
         else: 
             return []
         
@@ -137,9 +137,10 @@ class Config(QConfig):
     def removeGame(self, gameConfig):
         try:
             gameConfig.stopTimers.emit()
-            signalBus.removeGameSignal.emit(gameConfig)
             name = gameConfig.name
+            self.schedule.value = [x for x in self.schedule.value if x[1] != name]
             self.games.pop(name)
+            signalBus.removeGameSignal.emit(gameConfig)
             self.__removeItem(name, 'IconPath')
             self.__removeItem(name, 'GamePath')
             self.__removeItem(name, 'ScriptPath')
@@ -154,6 +155,7 @@ class Config(QConfig):
             gameConfig = self.games[gameName]
             GameTimer(time, gameConfig)
             self.save()
+            signalBus.addScheduleSignal.emit()
             return True
         return False
 
@@ -161,6 +163,7 @@ class Config(QConfig):
         entry = [time, game]
         self.__class__.schedule.value.remove(entry)
         self.save()
+        signalBus.removeScheduleSignal.emit()
 
 
 def customload(self, file=None, config=None):
