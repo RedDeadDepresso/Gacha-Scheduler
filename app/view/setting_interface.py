@@ -37,13 +37,6 @@ class SettingInterface(ScrollArea):
             cfg.toastEnabled,
             self.gamesGroup
         )
-        self.messageBoxCard = SwitchSettingCard(
-            FIF.LAYOUT,
-            self.tr('Show MessageBox'),
-            self.tr('A messagebox will ask to run the game'),
-            cfg.messageBoxEnabled,
-            self.gamesGroup
-        )
         self.scriptCard = TimeSettingCard(
             cfg.scriptDelay,
             FIF.ROBOT,
@@ -175,7 +168,6 @@ class SettingInterface(ScrollArea):
 
         # add cards to group
         self.gamesGroup.addSettingCard(self.toastCard)
-        self.gamesGroup.addSettingCard(self.messageBoxCard)
         self.gamesGroup.addSettingCard(self.scriptCard)
 
         self.personalGroup.addSettingCard(self.micaCard)

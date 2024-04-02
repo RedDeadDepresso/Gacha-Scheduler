@@ -61,21 +61,14 @@ class GameRunner(QRunnable):
         else:
             iconPath = None
 
-        toast(self.gameName, 
+        result = toast(self.gameName, 
               f'{self.gameName} will open in 30 seconds', 
-              icon=iconPath)
-    
-    def showMessageBox(self):
-        # Display a single confirmation dialog for all programs
-        confirmation = ctypes.windll.user32.MessageBoxW(
-            0, f"Do you want to run {self.gameConfig.name}?", 
-            "Confirmation", 4)  # 4 means Yes/No
-
-        if confirmation != 6:  # 6 corresponds to "Yes" button
-            return False
-        else: 
-            return True
-        
+              button='Cancel',
+              icon=iconPath,
+              duration='long'
+              )
+        return result
+            
     def openProgram(self, path):
         if path.endswith(".py"):
             subprocess.Popen(['python', path], shell=True)
@@ -85,13 +78,8 @@ class GameRunner(QRunnable):
 
     def run(self):
         if os.path.exists(self.gamePath):
-            if cfg.toastEnabled.value:
-                self.showToast()
-                time.sleep(30)
-
-            if cfg.messageBoxEnabled.value and not self.showMessageBox():
-                return
-            
+            if cfg.toastEnabled.value and self.showToast() == {'arguments': 'http:Cancel', 'user_input': {}}:
+                return 
             self.openProgram(self.gamePath)
             
         if os.path.exists(self.scriptPath):

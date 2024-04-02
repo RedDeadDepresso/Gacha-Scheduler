@@ -73,7 +73,6 @@ class Config(QConfig):
     
     # games
     toastEnabled = ConfigItem("Games", "ToastEnabled", True, BoolValidator())
-    messageBoxEnabled = ConfigItem("Games", "MessageBoxEnabled", True, BoolValidator())
     scriptDelay = ConfigItem("Games", "ScriptDelay", '00:00:30')
     schedule = ConfigItem("Games", "Schedule", [])
 
