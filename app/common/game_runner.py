@@ -47,6 +47,9 @@ class GameRunner(QRunnable):
             # Extract command line arguments from the shortcut
             args = shortcut.Arguments
             args = args.split(" ")
+            for i, arg in enumerate(args):
+                if set(arg) == {'"'} or set(arg) == {"'"}:
+                    args[i] = ''
             if args == [""]:
                 args = []
         else:
