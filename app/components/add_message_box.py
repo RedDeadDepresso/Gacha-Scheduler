@@ -80,7 +80,7 @@ class AddMessageBox(MessageBoxBase):
 
     def openImageDialog(self, lineEdit):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg *.webp)", options=options)
         if fileName:
             lineEdit.setText(fileName)  # update the second LineEdit with the selected file
 

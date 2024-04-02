@@ -100,7 +100,7 @@ class EditInterface(ScrollArea):
     @Slot(GameConfig, PushSettingCard)
     def openImageDialog(self, item, card):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg *.webp)", options=options)
         if not fileName or cfg.get(item) == fileName:
             return
         

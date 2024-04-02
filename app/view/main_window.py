@@ -46,18 +46,7 @@ class MainWindow(FluentWindow):
         # add items to navigation interface
         self.initNavigation()
         self.splashScreen.finish()
-
-        listener = keyboard.Listener(on_press=self.on_press)
-        listener.start()  # s1tart to listen on a separate thread
-
-    def on_press(self,key):
-        try:
-            k = key.char  # single-char keys
-        except:
-            k = key.name  # other keys
-        if k in ['1']:  # keys of interest
-            # self.keys.append(k)  # store it in global-like variable
-            signalBus.toggleVisibilitySignal.emit()
+        keyboard.GlobalHotKeys({'<ctrl>+<alt>+h': signalBus.toggleVisibilitySignal.emit}).start()
 
     def initSystemTray(self):
         # Create a QSystemTrayIcon

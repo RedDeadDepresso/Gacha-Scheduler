@@ -43,11 +43,16 @@ class NavigationGameWidget(NavigationWidget):
         self.layout.addWidget(self.nameLabel)
 
     def setAvatarLabel(self, avatar: Union[str, QPixmap, QImage]):
-        if isinstance(avatar, str) and os.path.exists(avatar):
-            avatar = QImage(avatar)
-        elif isinstance(avatar, QPixmap):
+        valid = False
+        if isinstance(avatar, QPixmap):
             avatar = avatar.toImage()
-        else:
+            valid = True
+        elif isinstance(avatar, str) and os.path.exists(avatar):
+            avatar = QImage(avatar)
+            if not avatar.isNull():
+                valid = True
+                
+        if not valid:
             avatar = QImage(FIF.GAME.path())
 
         self.avatar = avatar.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)
