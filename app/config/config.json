@@ -15,7 +15,7 @@
         "ScriptPath": "C:/Scripts/ArisuAutoSweeper/aas.exe"
     },
     "Material": {
-        "AcrylicBlurRadius": 40
+        "AcrylicBlurRadius": 37
     },
     "Update": {
         "CheckUpdateAtStartUp": true

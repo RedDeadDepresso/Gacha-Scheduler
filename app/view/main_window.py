@@ -1,8 +1,8 @@
 # coding: utf-8
 from typing import List
 from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize, Slot, QThreadPool
-from PySide6.QtGui import QIcon, QDesktopServices
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget
+from PySide6.QtGui import QIcon, QDesktopServices, QAction, QShortcut, QKeySequence
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget, QMenu, QSystemTrayIcon
 
 from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, NavigationPushButton, MessageBox, FluentWindow,
                             SplashScreen, qrouter)
@@ -38,17 +38,42 @@ class MainWindow(FluentWindow):
         self.navigationInterface.setMenuButtonVisible(False)
         self.navigationInterface.setCollapsible(False)
 
+        self.bindShortcut()
         self.connectSignalToSlot()
 
         # add items to navigation interface
         self.initNavigation()
         self.splashScreen.finish()
 
+    def bindShortcut(self):
+        self.shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
+        self.shortcut.activated.connect(self.toggle_visibility)
+
+        # Create a QSystemTrayIcon
+        self.trayIcon = QSystemTrayIcon(self)
+        self.trayIcon.setIcon(self.windowIcon())  # Replace with the path to your icon
+
+        # Create a QMenu
+        self.trayMenu = QMenu(self)
+
+        # Create a QAction for showing and hiding the window
+        self.showAction = QAction("Show/Hide", self)
+        self.exitAction = QAction("Exit", self)
+        self.trayMenu.addAction(self.showAction)
+        self.trayMenu.addAction(self.exitAction)
+
+        # Set the context menu for the tray icon to the created menu
+        self.trayIcon.setContextMenu(self.trayMenu)
+
+        # Show the tray icon
+        self.trayIcon.show()
+
     def connectSignalToSlot(self):
         signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
         signalBus.addGameSignal.connect(self.addGame)
         signalBus.removeGameSignal.connect(self.removeGame)
         signalBus.createThreadSignal.connect(self.createThread)
+        self.showAction.triggered.connect(self.toggle_visibility)
 
     def initNavigation(self):
         # add navigation items
@@ -95,6 +120,12 @@ class MainWindow(FluentWindow):
         super().resizeEvent(e)
         if hasattr(self, 'splashScreen'):
             self.splashScreen.resize(self.size())
+
+    def toggle_visibility(self):
+        if self.isVisible():
+            self.hide()
+        else:
+            self.show()
 
     def showMessageBox(self):
         w = AddMessageBox(self)
