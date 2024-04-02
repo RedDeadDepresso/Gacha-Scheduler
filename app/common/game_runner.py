@@ -35,7 +35,7 @@ class GameRunner(QRunnable):
     @property
     def scriptDelay(self):
         h, m, s = map(int, cfg.scriptDelay.value.split(':'))
-        return (h * 3600000) + (m * 60000) + (s * 1000)
+        return (h * 3600) + (m * 60) + s
 
     def extractArgs(self, programPath):
         # Resolve the emulator's actual executable path from a shortcut if provided
