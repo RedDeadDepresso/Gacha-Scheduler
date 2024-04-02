@@ -30,7 +30,7 @@ class EditInterface(ScrollArea):
 
         # games
         self.editGroup = SettingCardGroup(
-            self.tr('Edit'), self.scrollWidget)
+            self.tr(''), self.scrollWidget)
 
         self.iconCard = PushSettingCard(
             self.tr('Browse'),
@@ -94,7 +94,7 @@ class EditInterface(ScrollArea):
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
-        self.expandLayout.setContentsMargins(36, 10, 36, 0)
+        self.expandLayout.setContentsMargins(36, 0, 36, 0)
         self.expandLayout.addWidget(self.editGroup)
 
     @Slot(GameConfig, PushSettingCard)

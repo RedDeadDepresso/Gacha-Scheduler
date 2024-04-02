@@ -98,6 +98,8 @@ class MainWindow(FluentWindow):
         self.addSubInterface(
             self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
         
+        self.stackedWidget.setCurrentWidget(self.scheduleInterface, False)
+        
     def initWindow(self):
         self.resize(960, 780)
         self.setMinimumWidth(760)
