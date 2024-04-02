@@ -33,14 +33,14 @@ class SettingInterface(ScrollArea):
         self.toastCard = SwitchSettingCard(
             FIF.LAYOUT,
             self.tr('Show Toast Notification'),
-            None,
+            self.tr('A toast notification will be shown for 30 seconds before running the game'),
             cfg.toastEnabled,
             self.gamesGroup
         )
         self.messageBoxCard = SwitchSettingCard(
             FIF.LAYOUT,
             self.tr('Show MessageBox'),
-            None,
+            self.tr('A messagebox will ask to run the game'),
             cfg.messageBoxEnabled,
             self.gamesGroup
         )
@@ -48,7 +48,7 @@ class SettingInterface(ScrollArea):
             cfg.scriptDelay,
             FIF.ROBOT,
             self.tr('Script Delay'),
-            None,
+            self.tr('The time to wait before running the script'),
             self.gamesGroup
         )
 
