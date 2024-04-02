@@ -18,6 +18,6 @@ class SignalBus(QObject):
     removeScheduleSignal = Signal()
 
     createThreadSignal = Signal(GameConfig)
-    
+    toggleVisibilitySignal = Signal()
 
 signalBus = SignalBus()

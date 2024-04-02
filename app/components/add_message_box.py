@@ -86,7 +86,7 @@ class AddMessageBox(MessageBoxBase):
 
     def openExeDialog(self, lineEdit):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py, *.lnk)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py *.lnk *.bat)", options=options)
         if fileName:
             lineEdit.setText(fileName)
 

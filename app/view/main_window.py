@@ -4,6 +4,8 @@ from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize, Slot, QThreadP
 from PySide6.QtGui import QIcon, QDesktopServices, QAction, QShortcut, QKeySequence
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget, QMenu, QSystemTrayIcon
 
+from pynput import keyboard
+
 from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, NavigationPushButton, MessageBox, FluentWindow,
                             SplashScreen, qrouter)
 from qfluentwidgets import FluentIcon as FIF
@@ -38,17 +40,26 @@ class MainWindow(FluentWindow):
         self.navigationInterface.setMenuButtonVisible(False)
         self.navigationInterface.setCollapsible(False)
 
-        self.bindShortcut()
+        self.initSystemTray()
         self.connectSignalToSlot()
 
         # add items to navigation interface
         self.initNavigation()
         self.splashScreen.finish()
 
-    def bindShortcut(self):
-        self.shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
-        self.shortcut.activated.connect(self.toggle_visibility)
+        listener = keyboard.Listener(on_press=self.on_press)
+        listener.start()  # s1tart to listen on a separate thread
 
+    def on_press(self,key):
+        try:
+            k = key.char  # single-char keys
+        except:
+            k = key.name  # other keys
+        if k in ['1']:  # keys of interest
+            # self.keys.append(k)  # store it in global-like variable
+            signalBus.toggleVisibilitySignal.emit()
+
+    def initSystemTray(self):
         # Create a QSystemTrayIcon
         self.trayIcon = QSystemTrayIcon(self)
         self.trayIcon.setIcon(self.windowIcon())  # Replace with the path to your icon
@@ -73,7 +84,8 @@ class MainWindow(FluentWindow):
         signalBus.addGameSignal.connect(self.addGame)
         signalBus.removeGameSignal.connect(self.removeGame)
         signalBus.createThreadSignal.connect(self.createThread)
-        self.showAction.triggered.connect(self.toggle_visibility)
+        signalBus.toggleVisibilitySignal.connect(self.toggleVisibility)
+        self.showAction.triggered.connect(self.toggleVisibility)
 
     def initNavigation(self):
         # add navigation items
@@ -121,7 +133,7 @@ class MainWindow(FluentWindow):
         if hasattr(self, 'splashScreen'):
             self.splashScreen.resize(self.size())
 
-    def toggle_visibility(self):
+    def toggleVisibility(self):
         if self.isVisible():
             self.hide()
         else:
@@ -156,7 +168,6 @@ class MainWindow(FluentWindow):
 
     @Slot(GameConfig)
     def createThread(self, gameConfig):
-        print("Creating thread")
         gameRunner = GameRunner(gameConfig)
         self.threadPool.start(gameRunner)
     

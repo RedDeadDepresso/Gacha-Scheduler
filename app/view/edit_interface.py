@@ -110,7 +110,7 @@ class EditInterface(ScrollArea):
     @Slot(GameConfig, PushSettingCard)
     def openExeDialog(self, item, card):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py, *.lnk)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py *.lnk *.bat)", options=options)
         if not fileName or cfg.get(item) == fileName:
             return
         

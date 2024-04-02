@@ -30,7 +30,6 @@ class GameTimer(QTimer):
         return diffMilliseconds        
     
     def sendThreadSignal(self):
-        print("Sending signal")
         signalBus.createThreadSignal.emit(self.gameConfig)
     
     def resetTimer(self):
