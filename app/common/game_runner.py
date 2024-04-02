@@ -7,8 +7,8 @@ import time
 import win32com.client
 
 from ..common.config import cfg
-from plyer import notification
 from PySide6.QtCore import QRunnable, Slot
+from win11toast import toast
 
 
 class GameRunner(QRunnable):
@@ -61,12 +61,9 @@ class GameRunner(QRunnable):
         else:
             iconPath = None
 
-        notification.notify(
-            title="Notification",
-            message=f'{self.gameName} will open in 30 seconds',
-            timeout=10,
-            app_icon=None,
-        )
+        toast(self.gameName, 
+              f'{self.gameName} will open in 30 seconds', 
+              icon=iconPath)
     
     def showMessageBox(self):
         # Display a single confirmation dialog for all programs
