@@ -95,7 +95,8 @@ class AddMessageBox(MessageBoxBase):
             self.nameLineEdit.setStyleSheet("border: 1px solid red;")
             return True
         else:
-            self.lineEdit.setStyleSheet("")
+            self.nameLineEdit.setStyleSheet("")
+            return False
         
     def validatePaths(self):
         valid = True

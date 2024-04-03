@@ -37,32 +37,7 @@ class LanguageSerializer(ConfigSerializer):
 
     def deserialize(self, value: str):
         return Language(QLocale(value)) if value != "Auto" else Language.AUTO
-
-
-class ScheduleSerializer:
-                
-    def isTime(self, string):
-        try:
-            datetime.strptime(string, '%H:%M:%S')
-            return True
-        except ValueError:
-            return False
-        
-    def isGame(self, string):
-        return string in cfg.games
     
-    def validate(self, element):
-        if isinstance(element, list) and len(element) == 2:
-            if self.isTime(element[0]) and self.isGame(element[1]):
-                return True
-        return False
-                                                       
-    def deserialize(self, value):
-        if isinstance(value, list) and len(value) > 0:
-            return [x for x in value if self.validate(x)]
-        else:
-            return []
-
 
 def isWin11():
     return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
@@ -110,10 +85,6 @@ class Config(QConfig):
         item_name = group + name
         delattr(self.__class__, item_name)
 
-    def loadSchedule(self):
-        serializer = ScheduleSerializer()
-        Config.schedule.value = serializer.deserialize(Config.schedule.value)
-
     def addGame(self, name, iconPath, gamePath, scriptPath, save=True):
         try:
             gameConfig = GameConfig(name, iconPath, gamePath, scriptPath)
@@ -144,21 +115,46 @@ class Config(QConfig):
         except Exception as e:
             print(e)
 
-    def addSchedule(self, time, gameName):
-        if gameName in self.games:
-            entry = [time, gameName]
-            bisect.insort(self.__class__.schedule.value, entry, key=lambda x: x[0])
+    def isTime(self, string):
+        try:
+            datetime.strptime(string, '%H:%M:%S')
+            return True
+        except ValueError:
+            return False
+        
+    def isGame(self, string):
+        return string in self.games
+    
+    def isScheduleEntry(self, element):
+        if len(element) == 2:
+            return self.addSchedule(element[0], element[1], save=True)
+        return False
+
+    def loadSchedule(self):
+        rawSchedule = self.get(Config.schedule)
+        if isinstance(rawSchedule, list):
+            validSchedule = [x for x in rawSchedule if self.isScheduleEntry(x)]
+            validSchedule.sort()
+            self.set(Config.schedule, validSchedule)
+        else:
+            self.set(Config.schedule, [])
+
+    def addSchedule(self, time, gameName, save=False):
+        if self.isTime(time) and self.isGame(gameName):
             gameConfig = self.games[gameName]
             timer = GameTimer(time, gameConfig)
             self.timers.add(timer)
-            self.save()
-            signalBus.addScheduleSignal.emit()
+            if not save:
+                entry = [time, gameName]
+                bisect.insort(Config.schedule.value, entry, key=lambda x: x[0])
+                self.save()
+                signalBus.addScheduleSignal.emit()
             return True
         return False
 
     def removeSchedule(self, time, game):
         entry = [time, game]
-        self.__class__.schedule.value.remove(entry)
+        Config.schedule.value.remove(entry)
         self.save()
         signalBus.removeScheduleSignal.emit()
 
