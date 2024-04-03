@@ -4,12 +4,6 @@ Gacha-Scheduler is an application to quickly launch and schedule gacha games alo
 You can find some examples [here](https://github.com/stars/LmeSzinc/lists/awesome-nijigen-mobile-game-bots).
 
 <img width="715" alt="Screenshot 2024-04-03 014048" src="https://github.com/RedDeadDepresso/Gacha-Scheduler/assets/94017243/57f1f777-dae3-49ba-a32d-eba9aefeada9">
-
-## Table of Contents
-- [Requirements](#requirements)
-- [Supported Emulators](#supported-emulators)
-- [Installation and Usage](#installation-and-usage)
-- [Acknowledgment](#acknowledgment)
   
 ## Requirements
 - Windows 10 or 11
