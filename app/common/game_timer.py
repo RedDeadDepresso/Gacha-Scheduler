@@ -12,7 +12,7 @@ class GameTimer(QTimer):
         self.time = datetime.strptime(time, "%H:%M:%S")
 
         gameConfig.stopTimers.connect(self.stop)
-        self.timeout.connect(self.resetTimer)
+        self.timeout.connect(self.reset)
         self.setInterval(self.diffMilliseconds)
         self.start()
 
@@ -32,7 +32,8 @@ class GameTimer(QTimer):
     def sendThreadSignal(self):
         signalBus.createThreadSignal.emit(self.gameConfig)
     
-    def resetTimer(self):
+    def reset(self):
+        self.stop()
         self.sendThreadSignal()
         self.setInterval(self.diffMilliseconds)
         self.start()
