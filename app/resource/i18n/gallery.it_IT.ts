@@ -144,8 +144,8 @@
     </message>
     <message>
         <location filename="../../components/navigation_game_widget.py" line="84"/>
-        <source>Are you sure you want to remove {self.name}?</source>
-        <translation>Sei sicuro di voler rimuovere {self.name}?</translation>
+        <source>Are you sure you want to remove </source>
+        <translation>Sei sicuro di voler rimuovere </translation>
     </message>
     <message>
         <location filename="../../components/navigation_game_widget.py" line="89"/>

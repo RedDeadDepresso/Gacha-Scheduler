@@ -83,7 +83,7 @@ class NavigationGameWidget(NavigationWidget):
     def showRemoveFlyout(self):
         view = FlyoutView(
             title=self.tr('Warning'),
-            content=self.tr(f"Are you sure you want to remove {self.name}?")
+            content=self.tr("Are you sure you want to remove ") + f"{self.name}?"
         )
         # add button to view
         button = PushButton(self.tr('Yes'))
