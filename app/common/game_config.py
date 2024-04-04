@@ -4,7 +4,6 @@ from qfluentwidgets import ConfigItem
 
 
 class GameConfig(QObject):
-    stopTimers = Signal()
 
     def __init__(self, name, iconPath, gamePath, scriptPath):
         super().__init__()
@@ -19,5 +18,17 @@ class GameConfig(QObject):
         self.scriptPath = ConfigItem(self.name, "ScriptPath", "")
         self.scriptPath.value = scriptPath
 
+        self.timers = {}
         self.navigationGameWidget = None
         self.interface = None
+
+    def killTimers(self):
+        for timer in self.timers:
+            timer.stop()
+        self.timers.clear()
+
+    def getTimer(self, time):
+        for timer, timeSet in self.timers.items():
+            if timeSet == time:
+                return timer
+        return None

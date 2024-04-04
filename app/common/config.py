@@ -68,7 +68,6 @@ class Config(QConfig):
     def __init__(self):
         super().__init__()
         self.games = {}
-        self.timers = set()
 
     def __addItem(self, group, name, value):
         item_name = group + name
@@ -104,7 +103,7 @@ class Config(QConfig):
 
     def removeGame(self, gameConfig):
         try:
-            gameConfig.stopTimers.emit()
+            gameConfig.killTimers()
             name = gameConfig.name
             self.schedule.value = [x for x in self.schedule.value if x[1] != name]
             self.games.pop(name)
@@ -128,7 +127,7 @@ class Config(QConfig):
     
     def isScheduleEntry(self, element):
         if len(element) == 2:
-            return self.addSchedule(element[0], element[1], save=True)
+            return self.addSchedule(element[0], element[1], save=False)
         return False
 
     def loadSchedule(self):
@@ -140,12 +139,13 @@ class Config(QConfig):
         else:
             self.set(Config.schedule, [])
 
-    def addSchedule(self, time, gameName, save=False):
+    def addSchedule(self, time, gameName, save=True):
         if self.isTime(time) and self.isGame(gameName):
             gameConfig = self.games[gameName]
             timer = GameTimer(time, gameConfig)
-            self.timers.add(timer)
-            if not save:
+            gameConfig.timers[timer] = time
+            timer.start()
+            if save:
                 entry = [time, gameName]
                 bisect.insort(Config.schedule.value, entry, key=lambda x: x[0])
                 self.save()
@@ -154,10 +154,18 @@ class Config(QConfig):
         return False
 
     def removeSchedule(self, time, game):
-        entry = [time, game]
-        Config.schedule.value.remove(entry)
-        self.save()
-        signalBus.removeScheduleSignal.emit()
+        try:
+            gameConfig = self.games[game]
+            timer = gameConfig.getTimer(time)
+            timer.stop()
+            gameConfig.timers.pop(timer)
+
+            entry = [time, game]
+            Config.schedule.value.remove(entry)
+            self.save()
+            signalBus.removeScheduleSignal.emit()
+        except Exception as e:
+            print(e)
 
 
 def customload(self, file=None, config=None):

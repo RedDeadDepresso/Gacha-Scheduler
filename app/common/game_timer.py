@@ -11,10 +11,8 @@ class GameTimer(QTimer):
         self.gameConfig = gameConfig
         self.time = datetime.strptime(time, "%H:%M:%S")
 
-        gameConfig.stopTimers.connect(self.stop)
         self.timeout.connect(self.reset)
         self.setInterval(self.diffMilliseconds)
-        self.start()
 
     @property
     def diffMilliseconds(self):
