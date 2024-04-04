@@ -62,22 +62,22 @@ class NavigationGameWidget(NavigationWidget):
 
     def setPlayButton(self):
         self.playButton = ToolButton(FIF.PLAY_SOLID, self)
-        self.playButton.setToolTip('Run')
+        self.playButton.setToolTip(self.tr('Run'))
         self.layout.addWidget(self.playButton)
 
     def setScriptButton(self):
         self.scriptButton = ToolButton(FIF.ROBOT, self)
-        self.scriptButton.setToolTip('Run with script')
+        self.scriptButton.setToolTip(self.tr('Run with script'))
         self.layout.addWidget(self.scriptButton)
 
     def setEditButton(self):
         self.editButton = ToolButton(FIF.EDIT, self)
-        self.editButton.setToolTip('Edit')
+        self.editButton.setToolTip(self.tr('Edit'))
         self.layout.addWidget(self.editButton)
 
     def setRemoveButton(self):
         self.removeButton = ToolButton(FIF.DELETE, self)
-        self.removeButton.setToolTip('Remove')
+        self.removeButton.setToolTip(self.tr('Remove'))
         self.layout.addWidget(self.removeButton)
 
     def showRemoveFlyout(self):
@@ -86,7 +86,7 @@ class NavigationGameWidget(NavigationWidget):
             content=self.tr(f"Are you sure you want to remove {self.name}?")
         )
         # add button to view
-        button = PushButton('Yes')
+        button = PushButton(self.tr('Yes'))
         button.setFixedWidth(120)
         button.clicked.connect(lambda: cfg.removeGame(self.gameConfig))
         button.clicked.connect(view.close)

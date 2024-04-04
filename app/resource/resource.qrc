@@ -22,6 +22,7 @@
 
         <file>i18n/gallery.zh_CN.qm</file>
         <file>i18n/gallery.zh_HK.qm</file>
+        <file>i18n/gallery.it_IT.qm</file>
 
     </qresource>
 </RCC>

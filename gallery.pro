@@ -1,19 +1,13 @@
 SOURCES += app/view/main_window.py \
+        app/components/add_message_box.py \
+        app/components/navigation_game_widget.py \
+        app/components/time_message_box.py \
+        app/components/timetable.py \
         app/view/setting_interface.py \
-        app/view/basic_input_interface.py \
-        app/view/dialog_interface.py \
-        app/view/menu_interface.py \
-        app/view/gallery_interface.py \
-        app/view/status_info_interface.py \
-        app/view/scroll_interface.py \
+        app/view/schedule_interface.py \
+        app/view/edit_interface.py \
         app/common/translator.py \
-        app/view/material_interface.py \
-        app/view/layout_interface.py \
-        app/view/text_interface.py \
-        app/view/icon_interface.py \
-        app/view/view_interface.py \
-        app/view/date_time_interface.py \
-        app/view/navigation_view_interface.py \
 
 TRANSLATIONS += app/resource/i18n/gallery.zh_CN.ts \
-        app/resource/i18n/gallery.zh_HK.ts
+        app/resource/i18n/gallery.zh_HK.ts \
+        app/resource/i18n/gallery.it_IT.ts \

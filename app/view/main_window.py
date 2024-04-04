@@ -57,8 +57,8 @@ class MainWindow(FluentWindow):
         self.trayMenu = QMenu(self)
 
         # Create a QAction for showing and hiding the window
-        self.showAction = QAction("Show/Hide", self)
-        self.exitAction = QAction("Exit", self)
+        self.showAction = QAction(self.tr("Show/Hide"), self)
+        self.exitAction = QAction(self.tr("Exit"), self)
         self.trayMenu.addAction(self.showAction)
         self.trayMenu.addAction(self.exitAction)
 

@@ -100,7 +100,7 @@ class EditInterface(ScrollArea):
     @Slot(GameConfig, PushSettingCard)
     def openImageDialog(self, item, card):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg *.webp)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, self.tr("Add Icon"), "", "Images (*.png *.xpm *.jpg *.webp)", options=options)
         if not fileName or cfg.get(item) == fileName:
             return
         
@@ -110,7 +110,7 @@ class EditInterface(ScrollArea):
     @Slot(GameConfig, PushSettingCard)
     def openExeDialog(self, item, card):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py *.lnk *.bat)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, self.tr("Add Executable"), "", "Executable Files (*.exe *.py *.lnk *.bat)", options=options)
         if not fileName or cfg.get(item) == fileName:
             return
         

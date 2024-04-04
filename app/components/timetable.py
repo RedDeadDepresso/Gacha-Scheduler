@@ -31,7 +31,7 @@ class TimeTable(TableWidget):
     def contextMenuEvent(self, event):
         contextMenu = QMenu(self)
 
-        remove = QAction("Remove", self)
+        remove = QAction(self.tr("Remove"), self)
         contextMenu.addAction(remove)
 
         # Get the row number of the right-clicked cell

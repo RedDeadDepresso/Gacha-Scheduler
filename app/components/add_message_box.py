@@ -80,13 +80,13 @@ class AddMessageBox(MessageBoxBase):
 
     def openImageDialog(self, lineEdit):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Icon", "", "Images (*.png *.xpm *.jpg *.webp)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, self.tr("Add Icon"), "", "Images (*.png *.xpm *.jpg *.webp)", options=options)
         if fileName:
             lineEdit.setText(fileName)  # update the second LineEdit with the selected file
 
     def openExeDialog(self, lineEdit):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "Add Executable", "", "Executable Files (*.exe *.py *.lnk *.bat)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, self.tr("Add Executable"), "", "Executable Files (*.exe *.py *.lnk *.bat)", options=options)
         if fileName:
             lineEdit.setText(fileName)
 
