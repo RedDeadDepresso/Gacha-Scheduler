@@ -24,6 +24,7 @@ If you use emulator instances, you should provide .lnk or .bat file that can lau
 3. Add a time to the schedule to launch the game.
 4. Remove an entry in the schedule with Right Click.
 5. With the keyboard shortcut `Ctrl+Alt+H` you can hide/show Gacha-Scheduler from the system tray.
+6. [OPTIONAL] [Set Gacha-Scheduler on startup](https://support.microsoft.com/en-us/windows/add-an-app-to-run-automatically-at-startup-in-windows-10-150da165-dcd9-7230-517b-cf3c295d89dd)
 
 Please feel free to use and modify Gacha-Scheduler as you see fit. Your feedback and contributions are always welcome.
 
