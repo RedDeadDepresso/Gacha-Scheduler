@@ -12,6 +12,7 @@ class GameTimer(QTimer):
         self.time = datetime.strptime(time, "%H:%M:%S")
 
         self.timeout.connect(self.reset)
+        self.setSingleShot(True)
         self.setInterval(self.diffMilliseconds)
 
     @property
@@ -24,7 +25,6 @@ class GameTimer(QTimer):
 
         difference = timeObject - now
         diffMilliseconds = difference.total_seconds() * 1000
-
         return diffMilliseconds        
     
     def sendThreadSignal(self):
