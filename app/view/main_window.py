@@ -119,6 +119,11 @@ class MainWindow(FluentWindow):
         self.show()
         QApplication.processEvents()
 
+    def closeEvent(self, event):
+        if self.trayIcon is not None:
+            event.ignore()
+            self.hide()
+
     def resizeEvent(self, e):
         super().resizeEvent(e)
         if hasattr(self, 'splashScreen'):

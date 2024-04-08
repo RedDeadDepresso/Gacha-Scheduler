@@ -20,6 +20,9 @@ if cfg.get(cfg.dpiScale) != "Auto":
 app = QApplication(sys.argv)
 app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
+# Keep the application running even after all windows are closed
+app.setQuitOnLastWindowClosed(False)  
+
 # internationalization
 locale = cfg.get(cfg.language).value
 translator = FluentTranslator(locale)
