@@ -75,10 +75,10 @@ class GameRunner(QRunnable):
     def openProgram(self, path):
         directory = os.path.dirname(path)
         if path.endswith(".py"):
-            subprocess.Popen(['python', path], shell=True, cwd=directory)
+            subprocess.Popen(['python', path], shell=True, cwd=directory, creationflags=subprocess.DETACHED_PROCESS)
         else:
             path, args = self.extractArgs(path)
-            subprocess.Popen([path] + args, shell=True, cwd=directory)
+            subprocess.Popen([path] + args, shell=True, cwd=directory,  creationflags=subprocess.DETACHED_PROCESS)
 
     def run(self):
         if os.path.exists(self.gamePath):
