@@ -19,11 +19,13 @@ class GameTimer(QTimer):
     def diffMilliseconds(self):
         now = datetime.now()
         timeObject = self.time.replace(year=now.year, month=now.month, day=now.day)
-
-        if timeObject < now:
-            timeObject += timedelta(days=1)
-
         difference = timeObject - now
+
+        # avoid setting timer consecutively
+        if timeObject < now or difference.total_seconds() < 3:
+            timeObject += timedelta(days=1)
+            difference = timeObject - now
+
         diffMilliseconds = difference.total_seconds() * 1000
         return diffMilliseconds        
     
