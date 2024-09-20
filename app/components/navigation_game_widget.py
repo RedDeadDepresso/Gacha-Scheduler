@@ -4,7 +4,7 @@ import os
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout
 
-from qfluentwidgets import BodyLabel, FlyoutAnimationType, Flyout, FlyoutView, PushButton, ToolButton, IconWidget, ImageLabel
+from qfluentwidgets import BodyLabel, FlyoutAnimationType, Flyout, FlyoutView, PushButton, ToolButton, IconWidget, ImageLabel, ToolTipFilter
 from qfluentwidgets.common.icon import FluentIcon as FIF
 from qfluentwidgets.components.navigation import NavigationWidget
 
@@ -50,6 +50,7 @@ class NavigationGameWidget(NavigationWidget):
         toolButton = ToolButton(fluentIcon, self)
         toolButton.setToolTip(self.tr(toolTip))
         toolButton.setFixedSize(28, 28)
+        toolButton.installEventFilter(ToolTipFilter(toolButton))
         self.layout.addWidget(toolButton)
         return toolButton
 
