@@ -1,21 +1,12 @@
 # coding:utf-8
 import os
-import subprocess
-from typing import Union, List
 
-from PySide6.QtCore import (Qt, Signal, QRect, QRectF, QPropertyAnimation, Property, QMargins,
-                          QEasingCurve, QPoint, QEvent, QSize)
-from PySide6.QtGui import QColor, QPainter, QPen, QIcon, QCursor, QFont, QBrush, QPixmap, QImage
-from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QWidget
-from collections import deque
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QHBoxLayout
 
-from qfluentwidgets import BodyLabel, FlyoutAnimationType, Flyout, FlyoutView, PushButton, ToolButton
-from qfluentwidgets.common.config import isDarkTheme
-from qfluentwidgets.common.style_sheet import themeColor
-from qfluentwidgets.common.icon import drawIcon, toQIcon
+from qfluentwidgets import BodyLabel, FlyoutAnimationType, Flyout, FlyoutView, PushButton, ToolButton, IconWidget, ImageLabel
 from qfluentwidgets.common.icon import FluentIcon as FIF
-from qfluentwidgets.common.font import setFont
-from qfluentwidgets.components.navigation import NavigationAvatarWidget, NavigationWidget
+from qfluentwidgets.components.navigation import NavigationWidget
 
 from ..common.signal_bus import signalBus
 from ..common.config import cfg
@@ -30,7 +21,7 @@ class NavigationGameWidget(NavigationWidget):
         self.gameConfig = gameConfig
         self.name = gameConfig.name
         self.layout = QHBoxLayout(self)
-        self.setAvatarLabel(gameConfig.iconPath.value)
+        self.setAvatar(gameConfig.iconPath.value)
         self.setNameLabel()
         self.setPlayButton()
         self.setScriptButton()
@@ -42,24 +33,16 @@ class NavigationGameWidget(NavigationWidget):
         self.nameLabel = BodyLabel(self.name, self)
         self.layout.addWidget(self.nameLabel)
 
-    def setAvatarLabel(self, avatar: Union[str, QPixmap, QImage]):
-        valid = False
-        if isinstance(avatar, QPixmap):
-            avatar = avatar.toImage()
-            valid = True
-        elif isinstance(avatar, str) and os.path.exists(avatar):
-            avatar = QImage(avatar)
-            if not avatar.isNull():
-                valid = True
-                
-        if not valid:
-            avatar = QImage(FIF.GAME.path())
-
-        self.avatar = avatar.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.avatarLabel = QLabel(self)
-        self.avatarLabel.setPixmap(QPixmap.fromImage(self.avatar))
-        self.layout.addWidget(self.avatarLabel)
-
+    def setAvatar(self, avatar: str | None):
+        if isinstance(avatar, str) and os.path.exists(avatar):
+            self.avatar = ImageLabel(avatar)
+            self.avatar.setBorderRadius(8, 8, 8, 8)
+        else:
+            self.avatar = IconWidget(FIF.GAME)
+            
+        self.avatar.setFixedSize(24, 24)
+        self.layout.addWidget(self.avatar)
+            
     def setPlayButton(self):
         self.playButton = ToolButton(FIF.PLAY_SOLID, self)
         self.playButton.setToolTip(self.tr('Run'))
