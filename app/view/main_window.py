@@ -148,6 +148,7 @@ class MainWindow(FluentWindow):
             None,
             NavigationItemPosition.SCROLL
         )
+        self.navigationInterface.panel.scrollLayout.addSpacing(3)
         widget.editButton.clicked.connect(lambda checked=False, interface=interface: self.switchTo(interface))
         gameConfig.interface = interface
         gameConfig.navigationGameWidget = widget

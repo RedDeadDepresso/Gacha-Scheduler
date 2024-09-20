@@ -21,12 +21,15 @@ class NavigationGameWidget(NavigationWidget):
         self.gameConfig = gameConfig
         self.name = gameConfig.name
         self.layout = QHBoxLayout(self)
+
         self.setAvatar(gameConfig.iconPath.value)
         self.setNameLabel()
-        self.setPlayButton()
-        self.setScriptButton()
-        self.setEditButton()
-        self.setRemoveButton()
+
+        self.playButton = self.setToolButton(FIF.PLAY, 'Run')
+        self.scriptButton = self.setToolButton(FIF.ROBOT, 'Run with Script')
+        self.editButton = self.setToolButton(FIF.EDIT, 'Edit')
+        self.removeButton = self.setToolButton(FIF.DELETE, 'Remove')
+
         self.__connectSignalToSlot(gameConfig)
 
     def setNameLabel(self):
@@ -40,28 +43,15 @@ class NavigationGameWidget(NavigationWidget):
         else:
             self.avatar = IconWidget(FIF.GAME)
             
-        self.avatar.setFixedSize(24, 24)
+        self.avatar.setFixedSize(28, 28)
         self.layout.addWidget(self.avatar)
-            
-    def setPlayButton(self):
-        self.playButton = ToolButton(FIF.PLAY_SOLID, self)
-        self.playButton.setToolTip(self.tr('Run'))
-        self.layout.addWidget(self.playButton)
 
-    def setScriptButton(self):
-        self.scriptButton = ToolButton(FIF.ROBOT, self)
-        self.scriptButton.setToolTip(self.tr('Run with script'))
-        self.layout.addWidget(self.scriptButton)
-
-    def setEditButton(self):
-        self.editButton = ToolButton(FIF.EDIT, self)
-        self.editButton.setToolTip(self.tr('Edit'))
-        self.layout.addWidget(self.editButton)
-
-    def setRemoveButton(self):
-        self.removeButton = ToolButton(FIF.DELETE, self)
-        self.removeButton.setToolTip(self.tr('Remove'))
-        self.layout.addWidget(self.removeButton)
+    def setToolButton(self, fluentIcon: FIF, toolTip: str):
+        toolButton = ToolButton(fluentIcon, self)
+        toolButton.setToolTip(self.tr(toolTip))
+        toolButton.setFixedSize(28, 28)
+        self.layout.addWidget(toolButton)
+        return toolButton
 
     def showRemoveFlyout(self):
         view = FlyoutView(
@@ -75,7 +65,6 @@ class NavigationGameWidget(NavigationWidget):
         button.clicked.connect(view.close)
         view.addWidget(button, align=Qt.AlignLeft)
 
-        # adjust layout (optional)
         view.widgetLayout.insertSpacing(1, 5)
         view.widgetLayout.insertSpacing(0, 5)
         view.widgetLayout.addSpacing(5)
