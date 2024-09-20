@@ -1,13 +1,6 @@
 # coding:utf-8
-import os
-import sys
-
-from PySide6.QtCore import Qt, QPropertyAnimation
-from PySide6.QtGui import QPalette, QColor
-from PySide6.QtWidgets import QApplication, QDialog, QGraphicsOpacityEffect, QWidget, QHBoxLayout, QFileDialog, QVBoxLayout
-
-from qfluentwidgets import ComboBox, TimePicker, MessageBoxBase, SubtitleLabel, LineEdit, PushButton, setTheme, Theme
-from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
+from qfluentwidgets import ComboBox, TimePicker, MessageBoxBase, SubtitleLabel
+from ..common.config import cfg
 
 
 class TimeMessageBox(MessageBoxBase):

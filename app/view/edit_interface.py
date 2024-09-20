@@ -1,19 +1,11 @@
 # coding:utf-8
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard,
-                            OptionsSettingCard, PushSettingCard,
-                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
-                            setTheme, setThemeColor, RangeSettingCard, isDarkTheme)
+from qfluentwidgets import SettingCardGroup, PushSettingCard, ScrollArea, ExpandLayout
 from qfluentwidgets import FluentIcon as FIF
-from qfluentwidgets import InfoBar
-from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths, Slot
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
 from app.common.game_config import GameConfig
-
-from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
-from ..common.signal_bus import signalBus
+from ..common.config import cfg
 from ..common.style_sheet import StyleSheet
 
 

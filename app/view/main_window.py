@@ -1,19 +1,17 @@
 # coding: utf-8
-from typing import List
-from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize, Slot, QThreadPool
-from PySide6.QtGui import QIcon, QDesktopServices, QAction, QShortcut, QKeySequence
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget, QMenu, QSystemTrayIcon
+from PySide6.QtCore import Qt, Signal, QSize, Slot, QThreadPool
+from PySide6.QtGui import QIcon, QAction
+from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
 from pynput import keyboard
 
-from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, NavigationPushButton, MessageBox, FluentWindow,
-                            SplashScreen, qrouter)
+from qfluentwidgets import (NavigationItemPosition, NavigationPushButton, FluentWindow, SplashScreen, qrouter)
 from qfluentwidgets import FluentIcon as FIF
 
 from .edit_interface import EditInterface
 from .schedule_interface import ScheduleInterface
 from .setting_interface import SettingInterface
-from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
+from ..common.config import cfg
 from ..common.game_config import GameConfig
 from ..common.game_runner import GameRunner
 from ..common.signal_bus import signalBus

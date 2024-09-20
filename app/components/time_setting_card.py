@@ -2,10 +2,7 @@
 from typing import Union
 
 from PySide6.QtCore import Qt, Signal, QTime
-from PySide6.QtGui import QColor, QIcon, QPainter
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QToolButton, QVBoxLayout, QPushButton
-from PySide6.QtSvgWidgets import QSvgWidget
-
+from PySide6.QtGui import QIcon
 from qfluentwidgets import FluentIconBase, qconfig, SettingCard, TimePicker
 
 

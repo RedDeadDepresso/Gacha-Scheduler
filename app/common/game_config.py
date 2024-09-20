@@ -1,5 +1,4 @@
-from PySide6.QtCore import QObject, Signal
-
+from PySide6.QtCore import QObject
 from qfluentwidgets import ConfigItem
 
 
