@@ -16,9 +16,7 @@ from .setting_interface import SettingInterface
 from ..common.config import ZH_SUPPORT_URL, EN_SUPPORT_URL, cfg
 from ..common.game_config import GameConfig
 from ..common.game_runner import GameRunner
-from ..common.icon import Icon
 from ..common.signal_bus import signalBus
-from ..common.translator import Translator
 from ..common import resource
 from ..components.add_message_box import AddMessageBox
 from ..components.navigation_game_widget import NavigationGameWidget
@@ -78,7 +76,6 @@ class MainWindow(FluentWindow):
 
     def initNavigation(self):
         # add navigation items
-        t = Translator()
         self.navigationInterface.addSeparator(NavigationItemPosition.TOP)
 
         for gameConfig in cfg.games.values():
@@ -102,6 +99,7 @@ class MainWindow(FluentWindow):
         
     def initWindow(self):
         self.resize(960, 780)
+        self.setMinimumHeight(500)
         self.setMinimumWidth(760)
         self.setWindowIcon(QIcon(':/gallery/images/logo.png'))
         self.setWindowTitle('Gacha-Scheduler')
