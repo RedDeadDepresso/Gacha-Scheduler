@@ -34,6 +34,8 @@ class NavigationGameWidget(NavigationWidget):
 
     def setNameLabel(self):
         self.nameLabel = BodyLabel(self.name, self)
+        self.nameLabel.setContentsMargins(5, 5, 5, 5)
+        self.nameLabel.setMinimumHeight(30)
         self.layout.addWidget(self.nameLabel)
 
     def setAvatar(self, avatar: str | None):

@@ -1,11 +1,11 @@
 # coding: utf-8
 from PySide6.QtCore import Qt, Signal, QSize, Slot, QThreadPool
 from PySide6.QtGui import QIcon, QAction
-from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
+from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 
 from pynput import keyboard
 
-from qfluentwidgets import (NavigationItemPosition, NavigationPushButton, FluentWindow, SplashScreen, qrouter)
+from qfluentwidgets import (Action, NavigationItemPosition, NavigationPushButton, FluentWindow, SplashScreen, qrouter, RoundMenu)
 from qfluentwidgets import FluentIcon as FIF
 
 from .edit_interface import EditInterface
@@ -47,15 +47,15 @@ class MainWindow(FluentWindow):
     def initSystemTray(self):
         # Create a QSystemTrayIcon
         self.trayIcon = QSystemTrayIcon(self)
-        self.trayIcon.setIcon(self.windowIcon())  # Replace with the path to your icon
-
+        self.trayIcon.setIcon(self.windowIcon())
+        
         # Create a QMenu
-        self.trayMenu = QMenu(self)
+        self.trayMenu = RoundMenu(parent=self)
+        self.showAction = Action(FIF.VIEW, "Show/Hide")
+        self.exitAction = Action(FIF.CLOSE, "Exit")
 
-        # Create a QAction for showing and hiding the window
-        self.showAction = QAction(self.tr("Show/Hide"), self)
-        self.exitAction = QAction(self.tr("Exit"), self)
         self.trayMenu.addAction(self.showAction)
+        self.trayMenu.addSeparator()
         self.trayMenu.addAction(self.exitAction)
 
         # Set the context menu for the tray icon to the created menu

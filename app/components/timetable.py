@@ -1,9 +1,9 @@
 # coding: utf-8
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QTableWidgetItem, QHeaderView, QMenu
+from PySide6.QtWidgets import QTableWidgetItem, QHeaderView
 
-from qfluentwidgets import TableWidget
+from qfluentwidgets import Action, TableWidget, RoundMenu, MenuAnimationType
+from qfluentwidgets import FluentIcon as FIF
 from ..common.config import cfg
 from ..common.signal_bus import signalBus
 
@@ -27,9 +27,8 @@ class TimeTable(TableWidget):
         self.setTable()
 
     def contextMenuEvent(self, event):
-        contextMenu = QMenu(self)
-
-        remove = QAction(self.tr("Remove"), self)
+        contextMenu = RoundMenu(parent=self)
+        remove = Action(FIF.DELETE, self.tr("Remove"))
         contextMenu.addAction(remove)
 
         # Get the row number of the right-clicked cell
@@ -38,11 +37,9 @@ class TimeTable(TableWidget):
         time = self.item(row, 0).text()
         # Get the value of the second cell in the clicked row
         game = self.item(row, 1).text()
-
-        # Now you can use the values in your slots
+        self.selectRow(row)
         remove.triggered.connect(lambda: cfg.removeSchedule(time, game))
-
-        contextMenu.exec_(event.globalPos())
+        contextMenu.exec(event.globalPos(), False, MenuAnimationType.NONE)
 
     def setTable(self):
         self.clear()
