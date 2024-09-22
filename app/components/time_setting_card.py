@@ -3,7 +3,7 @@ from typing import Union
 
 from PySide6.QtCore import Qt, Signal, QTime
 from PySide6.QtGui import QIcon
-from qfluentwidgets import FluentIconBase, qconfig, SettingCard, TimePicker
+from qfluentwidgets import FluentIconBase, qconfig, SettingCard, TimeEdit
 
 
 class TimeSettingCard(SettingCard):
@@ -32,18 +32,19 @@ class TimeSettingCard(SettingCard):
         """
         super().__init__(icon, title, content, parent)
         self.configItem = configItem
-        self.timePicker = TimePicker(self, showSeconds=True)
+        self.timeEdit = TimeEdit(self)
 
         time = QTime.fromString(configItem.value, 'hh:mm:ss')
-        self.timePicker.setTime(time)
+        self.timeEdit.setDisplayFormat("hh:mm:ss")
+        self.timeEdit.setTime(time)
 
         self.hBoxLayout.addStretch(1)
         self.hBoxLayout.addSpacing(6)
-        self.hBoxLayout.addWidget(self.timePicker, 0, Qt.AlignRight)
+        self.hBoxLayout.addWidget(self.timeEdit, 0, Qt.AlignRight)
         self.hBoxLayout.addSpacing(16)
 
         configItem.valueChanged.connect(self.setTime)
-        self.timePicker.timeChanged.connect(self.__onTimeChanged)
+        self.timeEdit.timeChanged.connect(self.__onTimeChanged)
 
     def __onTimeChanged(self, time: QTime):
         """ time edit value changed slot """
@@ -53,6 +54,6 @@ class TimeSettingCard(SettingCard):
     def setTime(self, time):
         if isinstance(time, str):
             time = QTime.fromString(time, 'hh:mm:ss')
-            self.timePicker.setTime(time)
+            self.timeEdit.setTime(time)
         elif isinstance(time, QTime):
             qconfig.set(self.configItem, time.toString('hh:mm:ss'))

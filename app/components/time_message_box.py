@@ -1,5 +1,6 @@
 # coding:utf-8
-from qfluentwidgets import ComboBox, TimePicker, MessageBoxBase, SubtitleLabel
+from PySide6.QtCore import QTime
+from qfluentwidgets import ComboBox, MessageBoxBase, SubtitleLabel, TimeEdit
 from ..common.config import cfg
 
 
@@ -11,12 +12,14 @@ class TimeMessageBox(MessageBoxBase):
         self.titleLabel = SubtitleLabel(self.tr('Edit Schedule'), self)
         self.gameComboBox = ComboBox(self)
         self.gameComboBox.addItems(list(cfg.games.keys()))
-        self.timePicker = TimePicker(self, showSeconds=True)
+        self.timeEdit = TimeEdit(self)
+        self.timeEdit.setTime(QTime.currentTime())
+        self.timeEdit.setDisplayFormat("hh:mm:ss")
 
         # add widget to view layout
         self.viewLayout.addWidget(self.titleLabel)
         self.viewLayout.addWidget(self.gameComboBox)
-        self.viewLayout.addWidget(self.timePicker)
+        self.viewLayout.addWidget(self.timeEdit)
 
         # change the text of button
         self.yesButton.setText(self.tr('Save'))
@@ -27,7 +30,7 @@ class TimeMessageBox(MessageBoxBase):
 
     def __onYesButtonClicked(self):
         game = self.gameComboBox.currentText()
-        time = self.timePicker.getTime().toString()
+        time = self.timeEdit.text()
         if time:
             cfg.addSchedule(time, game)
             self.accept()
