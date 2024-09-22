@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 from app.common.game_config import GameConfig
 from ..common.config import cfg
 from ..common.style_sheet import StyleSheet
+from ..components.file_setting_card import FileType, FileSettingCard
 
 
 class EditInterface(ScrollArea):
@@ -24,38 +25,27 @@ class EditInterface(ScrollArea):
         self.editGroup = SettingCardGroup(
             self.tr(''), self.scrollWidget)
 
-        self.iconCard = PushSettingCard(
-            self.tr('Browse'),
-            FIF.FOLDER,
+        self.iconCard = FileSettingCard(
+            FileType.IMAGE, 
+            gameConfig.iconPath, 
+            FIF.PHOTO, 
             self.tr("Icon Path"),
-            cfg.get(gameConfig.iconPath),
-            self.editGroup
+            parent=self.editGroup
         )
-
-        self.gameCard = PushSettingCard(
-            self.tr('Browse'),
-            FIF.FOLDER,
-            self.tr("Game Path"),
-            cfg.get(gameConfig.gamePath),
-            self.editGroup
+        self.gameCard = FileSettingCard(
+            FileType.EXE,
+            gameConfig.gamePath, 
+            FIF.GAME, 
+            self.tr("Game Path"), 
+            parent=self.editGroup
         )
-
-        self.scriptCard = PushSettingCard(
-            self.tr('Browse'),
-            FIF.FOLDER,
+        self.scriptCard = FileSettingCard(
+            FileType.EXE, 
+            gameConfig.scriptPath,
+            FIF.ROBOT, 
             self.tr("Script Path"),
-            cfg.get(gameConfig.scriptPath),
-            self.editGroup
+            parent=self.editGroup
         )
-
-        self.iconCard.clicked.connect(
-            lambda item=gameConfig.iconPath, card=self.iconCard: self.openImageDialog(item, card))
-
-        self.scriptCard.clicked.connect(
-            lambda item=gameConfig.scriptPath, card=self.scriptCard: self.openExeDialog(item, card))
-        
-        self.gameCard.clicked.connect(
-            lambda item=gameConfig.gamePath, card=self.gameCard: self.openExeDialog(item, card))
         
         self.__initWidget()
 
@@ -88,26 +78,6 @@ class EditInterface(ScrollArea):
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 0, 36, 0)
         self.expandLayout.addWidget(self.editGroup)
-
-    @Slot(GameConfig, PushSettingCard)
-    def openImageDialog(self, item, card):
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, self.tr("Add Icon"), "", "Images (*.png *.xpm *.jpg *.webp)", options=options)
-        if not fileName or cfg.get(item) == fileName:
-            return
-        
-        cfg.set(item, fileName)
-        card.setContent(fileName)
-
-    @Slot(GameConfig, PushSettingCard)
-    def openExeDialog(self, item, card):
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, self.tr("Add Executable"), "", "Executable Files (*.exe *.py *.lnk *.bat)", options=options)
-        if not fileName or cfg.get(item) == fileName:
-            return
-        
-        cfg.set(item, fileName)
-        card.setContent(fileName)
 
 
 

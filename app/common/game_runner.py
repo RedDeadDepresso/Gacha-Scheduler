@@ -37,7 +37,8 @@ class GameRunner(QRunnable):
         h, m, s = map(int, cfg.scriptDelay.value.split(':'))
         return (h * 3600) + (m * 60) + s
 
-    def extractArgs(self, programPath):
+    @classmethod
+    def extractArgs(cls, programPath):
         # Resolve the emulator's actual executable path from a shortcut if provided
         if programPath.endswith('.lnk'):
             shell = win32com.client.Dispatch("WScript.Shell")
@@ -71,13 +72,14 @@ class GameRunner(QRunnable):
               duration='long'
               )
         return result
-            
-    def openProgram(self, path):
+
+    @classmethod
+    def openProgram(cls, path):
         directory = os.path.dirname(path)
         if path.endswith(".py"):
             subprocess.Popen(['python', path], shell=True, cwd=directory, creationflags=subprocess.DETACHED_PROCESS)
         else:
-            path, args = self.extractArgs(path)
+            path, args = cls.extractArgs(path)
             subprocess.Popen([path] + args, shell=True, cwd=directory,  creationflags=subprocess.DETACHED_PROCESS)
 
     def run(self):
