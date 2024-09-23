@@ -100,7 +100,7 @@ class MainWindow(FluentWindow):
         self.setMinimumHeight(500)
         self.setMinimumWidth(760)
         self.setWindowIcon(QIcon(':/gallery/images/logo.png'))
-        self.setWindowTitle('Gacha-Scheduler')
+        self.setWindowTitle('Gacha Scheduler')
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 

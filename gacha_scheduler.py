@@ -3,7 +3,6 @@ import os
 import sys
 
 from PySide6.QtCore import Qt, QTranslator
-from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication
 from qfluentwidgets import FluentTranslator
 
@@ -16,25 +15,25 @@ if cfg.get(cfg.dpiScale) != "Auto":
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
     os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpiScale))
 
-# create application
-app = QApplication(sys.argv)
-app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
-# Keep the application running even after all windows are closed
-app.setQuitOnLastWindowClosed(False)  
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
-# internationalization
-locale = cfg.get(cfg.language).value
-translator = FluentTranslator(locale)
-galleryTranslator = QTranslator()
-galleryTranslator.load(locale, "gallery", ".", ":/gallery/i18n")
+    # Keep the application running even after all windows are closed
+    app.setQuitOnLastWindowClosed(False)  
 
-app.installTranslator(translator)
-app.installTranslator(galleryTranslator)
+    # internationalization
+    locale = cfg.get(cfg.language).value
+    translator = FluentTranslator(locale)
+    galleryTranslator = QTranslator()
+    galleryTranslator.load(locale, "gallery", ".", ":/gallery/i18n")
 
-# create main window
-w = MainWindow()
-w.exitAction.triggered.connect(app.quit)
-w.show()
+    app.installTranslator(translator)
+    app.installTranslator(galleryTranslator)
 
-app.exec()
+    # create main window
+    w = MainWindow()
+    w.exitAction.triggered.connect(app.quit)
+    w.show()
+    app.exec()

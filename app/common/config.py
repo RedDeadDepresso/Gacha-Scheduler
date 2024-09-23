@@ -51,6 +51,7 @@ class Config(QConfig):
     toastEnabled = ConfigItem("Games", "ToastEnabled", True, BoolValidator())
     scriptDelay = ConfigItem("Games", "ScriptDelay", '00:00:30')
     schedule = ConfigItem("Games", "Schedule", [])
+    runSkippedEnabled = ConfigItem("Games", "RunSkippedEnabled", False, BoolValidator())
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
@@ -68,6 +69,7 @@ class Config(QConfig):
     def __init__(self):
         super().__init__()
         self.games = {}
+        self.todayDate = datetime.today().date()
 
     def __addItem(self, group, name, value):
         item_name = group + name
@@ -85,12 +87,13 @@ class Config(QConfig):
         item_name = group + name
         delattr(self.__class__, item_name)
 
-    def addGame(self, name, iconPath, gamePath, scriptPath, save=True):
+    def addGame(self, name, iconPath, gamePath, scriptPath, lastSession, save=True):
         try:
-            gameConfig = GameConfig(name, iconPath, gamePath, scriptPath)
+            gameConfig = GameConfig(name, iconPath, gamePath, scriptPath, lastSession)
             self.__addItem(name, 'IconPath', gameConfig.iconPath)
             self.__addItem(name, 'GamePath', gameConfig.gamePath)
             self.__addItem(name, 'ScriptPath', gameConfig.scriptPath)
+            self.__addItem(name, 'LastSession', gameConfig.lastSession)
             if save:
                 self.save()
             self.games[name] = gameConfig
@@ -125,10 +128,29 @@ class Config(QConfig):
     def isGame(self, string):
         return string in self.games
     
-    def isScheduleEntry(self, element):
-        if len(element) == 2:
-            return self.addSchedule(element[0], element[1], save=False)
-        return False
+    def isScheduleEntry(self, scheduleItem):
+        if len(scheduleItem) != 2:
+            return False
+        
+        time, gameName = scheduleItem
+        if not self.addSchedule(time, gameName, save=False):
+            return False
+        
+        if self.runSkippedEnabled.value:
+            self.runSkipped(time, gameName)
+            
+        return True
+            
+    def runSkipped(self, time, gameName):
+        gameConfig = self.games[gameName]
+        if not gameConfig.messageBox and self.wasSkipped(time, gameConfig):
+            self.set(gameConfig.lastSession, datetime.now())
+            gameConfig.showMessageBox()
+
+    def wasSkipped(self, time, gameConfig):
+        lastSession = gameConfig.lastSession.value
+        combined = datetime.strptime(time, "%H:%M:%S").replace(year=self.todayDate.year, month=self.todayDate.month, day=self.todayDate.day)
+        return lastSession < combined < datetime.now()
 
     def loadSchedule(self):
         rawSchedule = self.get(Config.schedule)
@@ -200,7 +222,7 @@ def customload(self, file=None, config=None):
             items[item.key] = item
 
     # update the value of config item
-    games_settings = {'IconPath', 'GamePath', 'ScriptPath'}
+    games_settings = {'IconPath', 'GamePath', 'ScriptPath', 'LastSession'}
     for k, v in cfg.items():
         if not isinstance(v, dict) and items.get(k) is not None:
             items[k].deserializeFrom(v)
@@ -211,6 +233,7 @@ def customload(self, file=None, config=None):
                                   iconPath=v['IconPath'], 
                                   gamePath=v['GamePath'], 
                                   scriptPath=v['ScriptPath'],
+                                  lastSession=v['LastSession'],
                                   save=False
                                   )
             

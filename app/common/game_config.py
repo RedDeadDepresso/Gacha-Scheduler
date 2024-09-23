@@ -1,10 +1,27 @@
+import multiprocessing
+from datetime import datetime
 from PySide6.QtCore import QObject
-from qfluentwidgets import ConfigItem
+from qfluentwidgets import ConfigItem, ConfigSerializer
+from app.components.run_message_box import runMessageBox
+from typing import Union
+
+
+class DateTimeSerializer(ConfigSerializer):
+    def serialize(self, value):
+        try:
+            return datetime.strftime(value, "%d-%m-%y %H:%M:%S")
+        except:
+            return datetime.strftime(datetime.now(), "%d-%m-%y %H:%M:%S")
+    
+    def deserialize(self, value):
+        try:
+            return datetime.strptime(value, "%d-%m-%y %H:%M:%S")
+        except:
+            return datetime.now()
 
 
 class GameConfig(QObject):
-
-    def __init__(self, name, iconPath, gamePath, scriptPath):
+    def __init__(self, name: str, iconPath: str, gamePath: str, scriptPath: str, lastSession: Union[str, datetime]):
         super().__init__()
 
         self.name = name
@@ -17,9 +34,18 @@ class GameConfig(QObject):
         self.scriptPath = ConfigItem(self.name, "ScriptPath", "")
         self.scriptPath.value = scriptPath
 
-        self.timers = {}
+        self.lastSession = ConfigItem(self.name, "LastSession", datetime.now(), serializer=DateTimeSerializer())
+        if isinstance(lastSession, str):
+            self.lastSession.value = datetime.strptime(lastSession, "%d-%m-%y %H:%M:%S")
+        elif isinstance(lastSession, datetime):
+            self.lastSession.value = lastSession
+        else:
+            self.lastSession.value = datetime.now()
+
+        self.timers = dict()
         self.navigationGameWidget = None
         self.interface = None
+        self.messageBox = None
 
     def killTimers(self):
         for timer in self.timers:
@@ -31,3 +57,10 @@ class GameConfig(QObject):
             if timeSet == time:
                 return timer
         return None
+    
+    def allValues(self):
+        return self.name, self.iconPath.value, self.gamePath.value, self.scriptPath.value
+    
+    def showMessageBox(self):
+        self.messageBox = multiprocessing.Process(target=runMessageBox, args=self.allValues(), daemon=True)
+        self.messageBox.start()

@@ -37,6 +37,13 @@ class SettingInterface(ScrollArea):
             cfg.toastEnabled,
             self.gamesGroup
         )
+        self.runSkippedCard = SwitchSettingCard(
+            FIF.PLAY,
+            self.tr('Run Skipped Games'),
+            self.tr('At startup a message box will appear for each skipped games'),
+            cfg.runSkippedEnabled,
+            self.gamesGroup
+        )
         self.scriptCard = TimeSettingCard(
             cfg.scriptDelay,
             FIF.ROBOT,
@@ -168,6 +175,7 @@ class SettingInterface(ScrollArea):
 
         # add cards to group
         self.gamesGroup.addSettingCard(self.toastCard)
+        self.gamesGroup.addSettingCard(self.runSkippedCard)
         self.gamesGroup.addSettingCard(self.scriptCard)
 
         self.personalGroup.addSettingCard(self.micaCard)

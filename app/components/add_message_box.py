@@ -1,6 +1,7 @@
 # coding:utf-8
 import os
 
+from datetime import datetime
 from PySide6.QtWidgets import QHBoxLayout, QFileDialog
 from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit, PushButton
 from ..common.config import cfg
@@ -118,6 +119,7 @@ class AddMessageBox(MessageBoxBase):
                 self.name, 
                 self.iconPath, 
                 self.gamePath, 
-                self.scriptPath
+                self.scriptPath,
+                datetime.now()
             )
 
