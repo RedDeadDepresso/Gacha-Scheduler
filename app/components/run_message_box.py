@@ -18,6 +18,7 @@ class RunMessageBox(Dialog):
             super().__init__('Gacha Scheduler', f'Do you want to run {gameConfig.name}?')
             self.titleLabel.setText("Arknights")
         self.__connectSignalToSlot()
+        self.setWindowTitle(f"{gameConfig.name} - Gacha Scheduler")
         self.setTitleBar(FluentTitleBar(self))
 
     def layoutWithIcon(self):
