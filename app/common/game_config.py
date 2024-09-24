@@ -1,8 +1,6 @@
-import multiprocessing
 from datetime import datetime
 from PySide6.QtCore import QObject
 from qfluentwidgets import ConfigItem, ConfigSerializer
-from app.components.run_message_box import runMessageBox
 from typing import Union
 
 
@@ -62,5 +60,5 @@ class GameConfig(QObject):
         return self.name, self.iconPath.value, self.gamePath.value, self.scriptPath.value
     
     def showMessageBox(self):
-        self.messageBox = multiprocessing.Process(target=runMessageBox, args=self.allValues(), daemon=True)
-        self.messageBox.start()
+        from app.components.run_message_box import RunMessageBox
+        RunMessageBox(self).show()

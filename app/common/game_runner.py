@@ -83,13 +83,12 @@ class GameRunner(QRunnable):
             path, args = cls.extractArgs(path)
             subprocess.Popen([path] + args, shell=True, cwd=directory,  creationflags=subprocess.DETACHED_PROCESS)
 
-    def run(self, saveSession=True):
+    def run(self):
         if os.path.exists(self.gamePath):
             if cfg.toastEnabled.value and self.showToast() == {'arguments': 'http:Cancel', 'user_input': {}}:
                 return 
             self.openProgram(self.gamePath)
-            if saveSession:
-                cfg.set(self.gameConfig.lastSession, datetime.now())
+            cfg.set(self.gameConfig.lastSession, datetime.now())
         if os.path.exists(self.scriptPath):
             time.sleep(self.scriptDelay)
             self.openProgram(self.scriptPath)

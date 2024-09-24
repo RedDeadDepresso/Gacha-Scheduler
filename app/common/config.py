@@ -150,7 +150,8 @@ class Config(QConfig):
     def wasSkipped(self, time, gameConfig):
         lastSession = gameConfig.lastSession.value
         combined = datetime.strptime(time, "%H:%M:%S").replace(year=self.todayDate.year, month=self.todayDate.month, day=self.todayDate.day)
-        return lastSession < combined < datetime.now()
+        day_skipped = (combined - lastSession).days
+        return day_skipped >= 1 or lastSession < combined < datetime.now()
 
     def loadSchedule(self):
         rawSchedule = self.get(Config.schedule)
