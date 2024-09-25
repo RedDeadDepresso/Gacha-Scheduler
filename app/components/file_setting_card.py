@@ -100,9 +100,8 @@ class FileSettingCard(SettingCard):
     def __initLayout(self):
         self.setFixedHeight(70)
         self.vBoxLayout.addWidget(self.lineEdit)
-        self.hBoxLayout.setStretch(2, 10)
-        self.hBoxLayout.addSpacing(8)
-        self.hBoxLayout.addWidget(self.commandBar, 0, Qt.AlignmentFlag.AlignRight)
+        self.hBoxLayout.setStretch(2, 70)
+        self.hBoxLayout.addWidget(self.commandBar, 0, Qt.AlignBottom | Qt.AlignRight)
         self.hBoxLayout.addSpacing(16)
 
     def __connectSignalToSlot(self):
