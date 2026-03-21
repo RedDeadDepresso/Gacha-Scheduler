@@ -1,11 +1,9 @@
 # coding:utf-8
-from qfluentwidgets import SettingCardGroup, PushSettingCard, ScrollArea, ExpandLayout
+from qfluentwidgets import SettingCardGroup, ScrollArea, ExpandLayout
 from qfluentwidgets import FluentIcon as FIF
-from PySide6.QtCore import Qt, Slot
-from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QLabel
 
-from app.common.game_config import GameConfig
-from ..common.config import cfg
 from ..common.style_sheet import StyleSheet
 from ..components.file_setting_card import FileType, FileSettingCard
 

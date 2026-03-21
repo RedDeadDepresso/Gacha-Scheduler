@@ -1,6 +1,6 @@
 # coding: utf-8
-from PySide6.QtCore import Qt, Signal, QSize, Slot, QThreadPool
-from PySide6.QtGui import QIcon, QAction
+from PySide6.QtCore import QSize, Slot, QThreadPool
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 
 from pynput import keyboard
@@ -15,6 +15,7 @@ from ..common.config import cfg
 from ..common.game_config import GameConfig
 from ..common.game_runner import GameRunner
 from ..common.signal_bus import signalBus
+from ..common.updater import UpdateManager
 from ..common import resource
 from ..components.add_message_box import AddMessageBox
 from ..components.navigation_game_widget import NavigationGameWidget
@@ -43,6 +44,9 @@ class MainWindow(FluentWindow):
         self.initNavigation()
         self.splashScreen.finish()
         keyboard.GlobalHotKeys({'<ctrl>+<alt>+h': signalBus.toggleVisibilitySignal.emit}).start()
+
+        self.updateManager = UpdateManager(self.threadPool, self)
+        self.updateManager.check()
 
     def initSystemTray(self):
         # Create a QSystemTrayIcon

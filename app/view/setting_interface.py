@@ -1,14 +1,14 @@
 # coding:utf-8
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard,
-                            OptionsSettingCard, PushSettingCard,
+from qfluentwidgets import (SettingCardGroup, SwitchSettingCard,
+                            OptionsSettingCard,
                             HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
+                            ComboBoxSettingCard, ExpandLayout, CustomColorSettingCard,
                             setTheme, setThemeColor, RangeSettingCard, isDarkTheme)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
-from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths
+from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
+from PySide6.QtWidgets import QWidget, QLabel
 
 from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
 from ..common.signal_bus import signalBus
@@ -122,15 +122,14 @@ class SettingInterface(ScrollArea):
             self.tr('Open help page'),
             FIF.HELP,
             self.tr('Help'),
-            self.tr(
-                'Discover new features and learn useful tips about PyQt-Fluent-Widgets'),
+            self.tr('Discover new features and learn useful tips about Gacha Scheduler'),
             self.aboutGroup
         )
         self.feedbackCard = PrimaryPushSettingCard(
             self.tr('Provide feedback'),
             FIF.FEEDBACK,
             self.tr('Provide feedback'),
-            self.tr('Help us improve PyQt-Fluent-Widgets by providing feedback'),
+            self.tr('Help us improve Gacha Scheduler by providing feedback'),
             self.aboutGroup
         )
         self.aboutCard = PrimaryPushSettingCard(
@@ -216,3 +215,4 @@ class SettingInterface(ScrollArea):
         # about
         self.feedbackCard.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
+        self.aboutCard.clicked.connect(signalBus.checkUpdateSignal.emit)

@@ -3,17 +3,17 @@ import bisect
 import json
 import sys
 import types
+import os
 
 from datetime import datetime
-
+from importlib.metadata import version, PackageNotFoundError
 from enum import Enum
 
 from pathlib import Path
 
-from PySide6.QtCore import QLocale, Signal
+from PySide6.QtCore import QLocale
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
-                            OptionsValidator, RangeConfigItem, RangeValidator,
-                            FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__, exceptionHandler)
+                            OptionsValidator, RangeConfigItem, RangeValidator, Theme, ConfigSerializer)
 
 from app.common.game_config import GameConfig
 from app.common.game_timer import GameTimer
@@ -224,19 +224,26 @@ def customload(self, file=None, config=None):
     self.theme = self.get(self.themeMode)
 
 
-YEAR = 2023
-AUTHOR = "zhiyiYo"
-VERSION = __version__
-HELP_URL = "https://qfluentwidgets.com"
-REPO_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets"
-EXAMPLE_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/tree/PySide6/examples"
-FEEDBACK_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/issues"
-RELEASE_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/releases/latest"
-ZH_SUPPORT_URL = "https://qfluentwidgets.com/zh/price/"
-EN_SUPPORT_URL = "https://qfluentwidgets.com/price/"
+try:
+    VERSION = version("gacha-scheduler")
+except PackageNotFoundError:
+    VERSION = "0.0.0"
 
+YEAR = 2024
+AUTHOR = "RedDeadDepresso"
+HELP_URL = "https://github.com/RedDeadDepresso/Gacha-Scheduler/issues"
+REPO_URL = "https://github.com/RedDeadDepresso/Gacha-Scheduler"
+FEEDBACK_URL = "https://github.com/RedDeadDepresso/Gacha-Scheduler/issues"
+RELEASE_URL = "https://github.com/RedDeadDepresso/Gacha-Scheduler/releases/latest"
+ZH_SUPPORT_URL = "https://github.com/RedDeadDepresso/Gacha-Scheduler/issues"
+EN_SUPPORT_URL = "https://github.com/RedDeadDepresso/Gacha-Scheduler/issues"
+
+
+CONFIG_DIR = Path(os.environ["APPDATA"]) / "Gacha-Scheduler"
+CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+CONFIG_PATH = CONFIG_DIR / "config.json"
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
 qconfig.load = types.MethodType(customload, qconfig)
-qconfig.load('app/config/config.json', cfg)
+qconfig.load(str(CONFIG_PATH), cfg)

@@ -19,5 +19,6 @@ class SignalBus(QObject):
 
     createThreadSignal = Signal(GameConfig)
     toggleVisibilitySignal = Signal()
+    checkUpdateSignal = Signal()
 
 signalBus = SignalBus()
