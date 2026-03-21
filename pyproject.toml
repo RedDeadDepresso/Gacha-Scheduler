@@ -8,7 +8,6 @@ dependencies = [
     "certifi>=2026.2.25",
     "packaging>=26.0",
     "psutil>=6.0.0",
-    "pynput>=1.8.1",
     "pyside6-fluent-widgets>=1.6.5",
     "win11toast>=0.36.3",
 ]
