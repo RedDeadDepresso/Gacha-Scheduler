@@ -1,0 +1,80 @@
+name: Build Gacha-Scheduler
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies (no dev)
+        run: uv sync --no-dev --group build
+
+      # ── Build Gacha-Scheduler.exe ───────────────────────────────────────────
+      - name: Build Gacha-Scheduler.exe
+        run: >
+          uv run pyinstaller --noconfirm --onedir --windowed
+          --name "Gacha-Scheduler"
+          --icon "app/resource/images/logo.ico"
+          --add-data "app/resource;app/resource"
+          --collect-data "qfluentwidgets"
+          --collect-data "certifi"
+          --copy-metadata "gacha-scheduler"
+          --hidden-import "PySide6.QtSvg"
+          --hidden-import "qfluentwidgets"
+          gacha_scheduler.py
+
+      # ── Copy SSL DLLs into _internal ────────────────────────────────────────
+      - name: Copy SSL DLLs
+        shell: pwsh
+        run: |
+          $dlls = (uv run python -c "import sys; print(sys.base_prefix)") + "\DLLs"
+          $internal = "dist\Gacha-Scheduler\_internal"
+          $root     = "dist\Gacha-Scheduler"
+          foreach ($target in @($internal, $root)) {
+            Copy-Item "$dlls\_ssl.pyd"             $target -Force
+            Copy-Item "$dlls\libcrypto-3-x64.dll"  $target -Force
+            Copy-Item "$dlls\libssl-3-x64.dll"     $target -Force
+          }
+
+      # ── Copy icons directory ────────────────────────────────────────────────
+      - name: Copy icons
+        shell: pwsh
+        run: Copy-Item -Recurse "icons" "dist\Gacha-Scheduler\icons"
+
+      # ── Zip the release ─────────────────────────────────────────────────────
+      - name: Zip release
+        shell: pwsh
+        run: Compress-Archive -Path "dist\Gacha-Scheduler\*" -DestinationPath "Gacha-Scheduler-${{ github.ref_name }}.zip"
+
+      # ── Upload artifact (available on every run, not just tagged releases) ──
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gacha-Scheduler-${{ github.ref_name }}
+          path: Gacha-Scheduler-${{ github.ref_name }}.zip
+          retention-days: 30
+
+      # ── Create GitHub Release (only on version tags) ─────────────────────────
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Gacha-Scheduler-${{ github.ref_name }}.zip
+          generate_release_notes: true
