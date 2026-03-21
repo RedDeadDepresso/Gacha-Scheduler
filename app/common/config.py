@@ -54,6 +54,8 @@ class Config(QConfig):
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
+    hotkeyEnabled = ConfigItem("Games", "HotkeyEnabled", True, BoolValidator())
+    hotkey = ConfigItem("Games", "Hotkey", "Ctrl+Alt+H")
     dpiScale = OptionsConfigItem(
         "MainWindow", "DpiScale", "Auto", OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]), restart=True)
     language = OptionsConfigItem(

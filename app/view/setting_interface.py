@@ -2,7 +2,7 @@
 from qfluentwidgets import (SettingCardGroup, SwitchSettingCard,
                             OptionsSettingCard,
                             HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, CustomColorSettingCard,
+                            ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
                             setTheme, setThemeColor, RangeSettingCard, isDarkTheme)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
@@ -14,7 +14,7 @@ from ..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, 
 from ..common.signal_bus import signalBus
 from ..common.style_sheet import StyleSheet
 from ..components.time_setting_card import TimeSettingCard
-
+from ..components.shortcut_setting_card import ShortcutSettingCard
 
 class SettingInterface(ScrollArea):
     """ Setting interface """
@@ -53,6 +53,20 @@ class SettingInterface(ScrollArea):
             self.tr('Mica effect'),
             self.tr('Apply semi transparent to windows and surfaces'),
             cfg.micaEnabled,
+            self.personalGroup
+        )
+        self.hotkeyEnabledCard = SwitchSettingCard(
+            FIF.LABEL,
+            self.tr('Enable shortcut'),
+            self.tr('Use a keyboard shortcut to show or hide the window'),
+            configItem=cfg.hotkeyEnabled,
+            parent=self.personalGroup
+        )
+        self.hotkeyCard = ShortcutSettingCard(
+            cfg.hotkey,
+            FIF.LABEL,
+            self.tr('Show/Hide shortcut'),
+            self.tr('Key combination to show or hide the window'),
             self.personalGroup
         )
         self.themeCard = OptionsSettingCard(
@@ -170,6 +184,8 @@ class SettingInterface(ScrollArea):
         self.gamesGroup.addSettingCard(self.scriptCard)
 
         self.personalGroup.addSettingCard(self.micaCard)
+        self.personalGroup.addSettingCard(self.hotkeyEnabledCard)
+        self.personalGroup.addSettingCard(self.hotkeyCard)
         self.personalGroup.addSettingCard(self.themeCard)
         self.personalGroup.addSettingCard(self.themeColorCard)
         self.personalGroup.addSettingCard(self.zoomCard)
@@ -211,8 +227,17 @@ class SettingInterface(ScrollArea):
         self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci)))
         self.themeColorCard.colorChanged.connect(lambda c: setThemeColor(c))
         self.micaCard.checkedChanged.connect(signalBus.micaEnableChanged)
+        self.hotkeyEnabledCard.checkedChanged.connect(self._onHotkeyEnabledChanged)
+        self.hotkeyCard.setEnabled(cfg.get(cfg.hotkeyEnabled))
 
         # about
         self.feedbackCard.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
         self.aboutCard.clicked.connect(signalBus.checkUpdateSignal.emit)
+
+    def _onHotkeyEnabledChanged(self, enabled: bool):
+        self.hotkeyCard.setEnabled(enabled)
+        signalBus.hotkeyEnabledSignal.emit(enabled)
+
+    def scrollToGroup(self, group):
+        self.verticalScrollBar().setValue(group.y())

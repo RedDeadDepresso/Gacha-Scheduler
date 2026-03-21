@@ -42,20 +42,38 @@ class HotkeyListener(threading.Thread):
     message here — giving us full foreground focus permission.
     """
 
+    WM_REREGISTER = 0x8001  # Custom message to trigger re-registration
+    WM_DISABLE    = 0x8002  # Custom message to unregister hotkey
+    WM_ENABLE     = 0x8003  # Custom message to register hotkey
+
     def __init__(self):
         super().__init__(daemon=True)
         self.signals = HotkeySignals()
         self._hwnd = None
 
+    def _register(self):
+        from app.common.config import cfg
+        from app.components.shortcut_setting_card import parse_hotkey
+        hotkey_str = cfg.get(cfg.hotkey)
+        mods, vk = parse_hotkey(hotkey_str)
+        ctypes.windll.user32.UnregisterHotKey(self._hwnd, HOTKEY_ID)
+        if cfg.get(cfg.hotkeyEnabled):
+            ctypes.windll.user32.RegisterHotKey(self._hwnd, HOTKEY_ID, mods, vk)
+
+    def reregister(self):
+        if self._hwnd:
+            ctypes.windll.user32.PostMessageW(self._hwnd, self.WM_REREGISTER, 0, 0)
+
+    def setEnabled(self, enabled: bool):
+        if self._hwnd:
+            msg = self.WM_ENABLE if enabled else self.WM_DISABLE
+            ctypes.windll.user32.PostMessageW(self._hwnd, msg, 0, 0)
+
     def run(self):
         user32   = ctypes.windll.user32
         kernel32 = ctypes.windll.kernel32
 
-        # Create a message-only window (invisible, no taskbar entry)
         HWND_MESSAGE = ctypes.wintypes.HWND(-3)
-        wc = ctypes.wintypes.WNDCLASS if hasattr(ctypes.wintypes, 'WNDCLASS') else None
-
-        # Use CreateWindowEx directly with a pre-registered class (static control)
         self._hwnd = user32.CreateWindowExW(
             0, "STATIC", "GachaHotkeyWindow", 0,
             0, 0, 0, 0,
@@ -65,19 +83,21 @@ class HotkeyListener(threading.Thread):
         if not self._hwnd:
             return
 
-        user32.RegisterHotKey(self._hwnd, HOTKEY_ID, MOD_CONTROL | MOD_ALT, VK_H)
+        self._register()
 
         msg = ctypes.wintypes.MSG()
         while user32.GetMessageW(ctypes.byref(msg), None, 0, 0) != 0:
             if msg.message == WM_HOTKEY and msg.wParam == HOTKEY_ID:
-                # Call SetForegroundWindow HERE, on this thread, while we still
-                # have foreground permission from receiving the input event.
-                # We don't have the main window's hwnd here so we emit a signal
-                # first to show() the window, then steal focus via AllowSetForegroundWindow
                 ctypes.windll.user32.AllowSetForegroundWindow(
                     ctypes.windll.kernel32.GetCurrentProcessId()
                 )
                 self.signals.triggered.emit()
+            elif msg.message == self.WM_REREGISTER:
+                self._register()
+            elif msg.message == self.WM_DISABLE:
+                user32.UnregisterHotKey(self._hwnd, HOTKEY_ID)
+            elif msg.message == self.WM_ENABLE:
+                self._register()
             user32.TranslateMessage(ctypes.byref(msg))
             user32.DispatchMessageW(ctypes.byref(msg))
 
@@ -85,7 +105,7 @@ class HotkeyListener(threading.Thread):
 
     def stop(self):
         if self._hwnd:
-            ctypes.windll.user32.PostMessageW(self._hwnd, 0x0012, 0, 0)  # WM_QUIT
+            ctypes.windll.user32.PostMessageW(self._hwnd, 0x0012, 0, 0)
 
 
 class MainWindow(FluentWindow):
@@ -105,22 +125,21 @@ class MainWindow(FluentWindow):
         self.navigationInterface.setCollapsible(False)
 
         self.initSystemTray()
+
+        # Instantiate before connectSignalToSlot so signals can be connected
+        self._hotkeyListener = HotkeyListener()
+        self._hotkeyListener.start()
+
         self.connectSignalToSlot()
 
         # add items to navigation interface
         self.initNavigation()
         self.splashScreen.finish()
 
-        # Start hotkey listener on its own message-loop thread
-        self._hotkeyListener = HotkeyListener()
-        self._hotkeyListener.signals.triggered.connect(self.toggleVisibility)
-        self._hotkeyListener.start()
-
         self.updateManager = UpdateManager(self.threadPool, self)
         self.updateManager.check()
 
     def initSystemTray(self):
-        # Create a QSystemTrayIcon
         self.trayIcon = QSystemTrayIcon(self)
         self.trayIcon.setIcon(self.windowIcon())
 
@@ -132,10 +151,7 @@ class MainWindow(FluentWindow):
         self.trayMenu.addSeparator()
         self.trayMenu.addAction(self.exitAction)
 
-        # Set the context menu for the tray icon to the created menu
         self.trayIcon.setContextMenu(self.trayMenu)
-
-        # Show the tray icon
         self.trayIcon.show()
 
     def connectSignalToSlot(self):
@@ -143,16 +159,17 @@ class MainWindow(FluentWindow):
         signalBus.addGameSignal.connect(self.addGame)
         signalBus.removeGameSignal.connect(self.removeGame)
         signalBus.createThreadSignal.connect(self.createThread)
+        signalBus.hotkeyChangedSignal.connect(lambda _: self._hotkeyListener.reregister())
+        signalBus.hotkeyEnabledSignal.connect(self._hotkeyListener.setEnabled)
+        self._hotkeyListener.signals.triggered.connect(self.toggleVisibility)
         self.showAction.triggered.connect(self.toggleVisibility)
 
     def initNavigation(self):
-        # add navigation items
         self.navigationInterface.addSeparator(NavigationItemPosition.TOP)
 
         for gameConfig in cfg.games.values():
             self.addGame(gameConfig)
 
-        # add custom widget to bottom
         self.navigationInterface.addSeparator(NavigationItemPosition.BOTTOM)
         self.navigationInterface.addWidget(
             'AddGame',
@@ -162,12 +179,10 @@ class MainWindow(FluentWindow):
         )
         self.addSubInterface(
             self.scheduleInterface, FIF.DATE_TIME, self.tr('Schedule'), NavigationItemPosition.BOTTOM)
-        
         self.addSubInterface(
             self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
-        
         self.stackedWidget.setCurrentWidget(self.scheduleInterface, False)
-        
+
     def initWindow(self):
         self.resize(960, 780)
         self.setMinimumHeight(500)
@@ -177,7 +192,6 @@ class MainWindow(FluentWindow):
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 
-        # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
         self.splashScreen.setIconSize(QSize(106, 106))
         self.splashScreen.raise_()
