@@ -12,14 +12,29 @@ from typing import Union
 from ..common.config import cfg
 
 
+def _executable_extensions():
+    """Build the set of executable extensions from Windows PATHEXT plus .lnk and .py."""
+    pathext = os.environ.get("PATHEXT", ".COM;.EXE;.BAT;.CMD")
+    exts = {e.lower() for e in pathext.split(";")}
+    exts.update({".lnk", ".py"})
+    return exts
+
+
+def _executable_filter():
+    """Build a QFileDialog filter string from executable extensions."""
+    exts = _executable_extensions()
+    patterns = " ".join(f"*{e}" for e in sorted(exts))
+    return f"Executable Files ({patterns})"
+
+
 class FileType(Enum):
     EXE = {
-        "dialogCaption": "Add Executable", 
-        "dialogfilter": "Executable Files (*.exe *.py *.lnk *.bat)",
-        "extensions": {".exe", ".py", ".lnk", ".bat"}
+        "dialogCaption": "Add Executable",
+        "dialogfilter": None,   # built dynamically via _executable_filter()
+        "extensions": None      # built dynamically via _executable_extensions()
     }
     IMAGE = {
-        "dialogCaption": "Add Icon", 
+        "dialogCaption": "Add Icon",
         "dialogfilter": "Images (*.png *.xpm *.jpg *.webp)",
         "extensions": {".png", ".xpm", ".jpg", ".webp"}
     }
@@ -30,10 +45,14 @@ class FileType(Enum):
 
     @property
     def dialogfilter(self):
+        if self.value["dialogfilter"] is None:
+            return _executable_filter()
         return self.value["dialogfilter"]
-    
+
     @property
     def extensions(self):
+        if self.value["extensions"] is None:
+            return _executable_extensions()
         return self.value["extensions"]
     
 
@@ -113,9 +132,9 @@ class FileSettingCard(SettingCard):
             cfg.set(self.configItem, "")
             self.lineEdit.setValid(True)
             return
-        
+
         path = pathlib.Path(text)
-        if path.is_absolute() and path.is_file() and path.exists() and path.suffix in self.fileType.extensions:
+        if path.is_absolute() and path.is_file() and path.exists() and path.suffix.lower() in self.fileType.extensions:
             cfg.set(self.configItem, text)
             self.lineEdit.setValid(True)
         else:
@@ -131,14 +150,14 @@ class FileSettingCard(SettingCard):
             subprocess.Popen(f'explorer /select,"{file_path}"')
 
     def browse(self):
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, 
-                                                  self.fileType.dialogCaption,
-                                                  "", 
-                                                  self.fileType.dialogfilter, 
-                                                  options=options)
-        
+        fileName, _ = QFileDialog.getOpenFileName(
+            self,
+            self.fileType.dialogCaption,
+            "",
+            self.fileType.dialogfilter,
+            options=QFileDialog.Option.DontResolveSymlinks
+        )
+
         if not fileName or cfg.get(self.configItem) == fileName:
             return
         self.lineEdit.setText(fileName)
-
