@@ -1,0 +1,24 @@
+[project]
+name = "gacha-scheduler"
+version = "0.1.0"
+description = "A program to quickly launch and schedule gacha games with their scripts."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "certifi>=2026.2.25",
+    "packaging>=26.0",
+    "psutil>=6.0.0",
+    "pynput>=1.8.1",
+    "pyside6-fluent-widgets>=1.6.5",
+    "win11toast>=0.36.3",
+]
+
+[dependency-groups]
+build = [
+    "hatchling>=1.29.0",
+    "pyinstaller>=6.19.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
