@@ -5,6 +5,7 @@ from qfluentwidgets import Action, TableWidget, RoundMenu, MenuAnimationType, Ch
 from qfluentwidgets import FluentIcon as FIF
 from ..common.config import cfg
 from ..common.signal_bus import signalBus
+from ..components.time_message_box import EditTimeMessageBox
 
 CHECKBOX_COL_WIDTH = 48
 
@@ -146,14 +147,24 @@ class TimeTable(TableWidget):
         row = self.rowAt(event.pos().y())
         if row < 0:
             return
-        contextMenu = RoundMenu(parent=self)
-        remove = Action(FIF.DELETE, self.tr("Remove"))
         time = self.item(row, 1).text()
         game = self.item(row, 2).text()
         self.selectRow(row)
+
+        contextMenu = RoundMenu(parent=self)
+        edit   = Action(FIF.EDIT,   self.tr("Edit"))
+        remove = Action(FIF.DELETE, self.tr("Remove"))
+
+        edit.triggered.connect(lambda: self._showEditDialog(time, game))
         remove.triggered.connect(lambda: cfg.removeSchedule(time, game))
+
+        contextMenu.addAction(edit)
         contextMenu.addAction(remove)
         contextMenu.exec(event.globalPos(), False, MenuAnimationType.NONE)
+
+    def _showEditDialog(self, time: str, game: str):
+        w = EditTimeMessageBox(time, game, self.window())
+        w.exec()
 
     def setTable(self):
         self.clear()
