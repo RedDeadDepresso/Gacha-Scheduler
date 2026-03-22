@@ -60,7 +60,15 @@ class UpdateChecker(QRunnable):
                 self.signals.error.emit("No zip asset found in latest release.")
                 return
 
-            if Version(latest) > Version(VERSION):
+            # Re-read version at check time so we always get the installed version
+            # rather than the stale module-level constant from before an update
+            from importlib.metadata import version as pkg_version, PackageNotFoundError
+            try:
+                current = pkg_version("gacha-scheduler")
+            except PackageNotFoundError:
+                current = VERSION
+
+            if Version(latest) > Version(current):
                 self.signals.updateAvailable.emit(latest, zip_url)
             else:
                 self.signals.noUpdate.emit()
@@ -162,11 +170,12 @@ Get-ChildItem -Path $staging | ForEach-Object {{
                     }}
                 }}
             }} else {{
-                $result = robocopy $_.FullName $dest /E /IS /IT /IM /NFL /NDL 2>&1
+                # Mirror all other directories so removed files are cleaned up
+                $result = robocopy $_.FullName $dest /MIR /IS /IT /IM /NFL /NDL 2>&1
                 if ($LASTEXITCODE -le 7) {{
-                    Log "Copied dir: $($_.Name)"
+                    Log "Mirrored dir: $($_.Name)"
                 }} else {{
-                    Log "ERROR copying dir $($_.Name): exit code $LASTEXITCODE"
+                    Log "ERROR mirroring dir $($_.Name): exit code $LASTEXITCODE"
                     $errors++
                 }}
             }}
