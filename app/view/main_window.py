@@ -3,11 +3,11 @@ import ctypes
 import ctypes.wintypes
 import threading
 
-from PySide6.QtCore import Qt, QSize, Slot, QThreadPool, QObject, Signal
+from PySide6.QtCore import Qt, QSize, Slot, QThreadPool, QObject, Signal, QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 
-from qfluentwidgets import (Action, NavigationItemPosition, NavigationPushButton, FluentWindow, SplashScreen, qrouter, RoundMenu)
+from qfluentwidgets import (Action, NavigationItemPosition, NavigationPushButton, FluentWindow, SplashScreen, qrouter, RoundMenu, SearchLineEdit)
 from qfluentwidgets import FluentIcon as FIF
 
 from .edit_interface import EditInterface
@@ -167,6 +167,14 @@ class MainWindow(FluentWindow):
     def initNavigation(self):
         self.navigationInterface.addSeparator(NavigationItemPosition.TOP)
 
+        # Search bar added directly to the scroll layout area
+        self._searchBox = SearchLineEdit(self.navigationInterface.panel)
+        self._searchBox.setPlaceholderText(self.tr('Search games'))
+        self._searchBox.setFixedHeight(32)
+        self._searchBox.textChanged.connect(self._filterGames)
+        self.navigationInterface.panel.scrollLayout.addWidget(self._searchBox)
+        self.navigationInterface.panel.scrollLayout.addSpacing(8)
+
         for gameConfig in cfg.games.values():
             self.addGame(gameConfig)
 
@@ -182,6 +190,14 @@ class MainWindow(FluentWindow):
         self.addSubInterface(
             self.settingInterface, FIF.SETTING, self.tr('Settings'), NavigationItemPosition.BOTTOM)
         self.stackedWidget.setCurrentWidget(self.scheduleInterface, False)
+
+    def _filterGames(self, text: str):
+        query = text.strip().lower()
+        for gameConfig in cfg.games.values():
+            widget = gameConfig.navigationGameWidget
+            if widget:
+                visible = query == '' or query in gameConfig.name.lower()
+                widget.setVisible(visible)
 
     def initWindow(self):
         self.resize(960, 780)
@@ -242,11 +258,16 @@ class MainWindow(FluentWindow):
         gameConfig.interface = interface
         gameConfig.navigationGameWidget = widget
 
+        if hasattr(self, '_searchBox'):
+            self._searchBox.clear()
+
     @Slot(GameConfig)
     def removeGame(self, gameConfig):
         self.stackedWidget.setCurrentWidget(self.scheduleInterface)
         self.navigationInterface.removeWidget(gameConfig.name)
         self.stackedWidget.view.removeWidget(gameConfig.interface)
+        if hasattr(self, '_searchBox'):
+            self._searchBox.clear()
 
     @Slot(GameConfig)
     def createThread(self, gameConfig):
