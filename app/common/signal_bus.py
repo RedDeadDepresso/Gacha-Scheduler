@@ -7,18 +7,16 @@ from app.common.game_config import GameConfig
 class SignalBus(QObject):
     """ Signal bus """
 
-    switchToSampleCard = Signal(str, int)
     micaEnableChanged = Signal(bool)
-    supportSignal = Signal()
 
     addGameSignal = Signal(GameConfig)
     removeGameSignal = Signal(GameConfig)
-    
+    errorSignal = Signal(str)
+
     addScheduleSignal = Signal()
     removeScheduleSignal = Signal()
 
     createThreadSignal = Signal(GameConfig)
-    toggleVisibilitySignal = Signal()
     checkUpdateSignal = Signal()
     hotkeyChangedSignal = Signal(str)
     hotkeyEnabledSignal = Signal(bool)

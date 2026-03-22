@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt, QSize, Slot, QThreadPool, QObject, Signal, QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 
-from qfluentwidgets import (Action, NavigationItemPosition, NavigationPushButton, FluentWindow, SplashScreen, qrouter, RoundMenu, SearchLineEdit)
+from qfluentwidgets import (Action, NavigationItemPosition, NavigationPushButton, FluentWindow, SplashScreen, qrouter, RoundMenu, SearchLineEdit, InfoBar, InfoBarPosition)
 from qfluentwidgets import FluentIcon as FIF
 
 from .edit_interface import EditInterface
@@ -163,11 +163,23 @@ class MainWindow(FluentWindow):
         signalBus.hotkeyEnabledSignal.connect(self._hotkeyListener.setEnabled)
         self._hotkeyListener.signals.triggered.connect(self.toggleVisibility)
         self.showAction.triggered.connect(self.toggleVisibility)
+        signalBus.errorSignal.connect(self._onError)
+
+    def _onError(self, message: str):
+        InfoBar.error(
+            title="Error",
+            content=message,
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP_RIGHT,
+            duration=4000,
+            parent=self
+        )
 
     def initNavigation(self):
         self.navigationInterface.addSeparator(NavigationItemPosition.TOP)
 
-        # Search bar added directly to the scroll layout area
+        # Search bar
         self._searchBox = SearchLineEdit(self.navigationInterface.panel)
         self._searchBox.setPlaceholderText(self.tr('Search games'))
         self._searchBox.setFixedHeight(32)

@@ -98,7 +98,7 @@ class Config(QConfig):
             self.games[name] = gameConfig
             signalBus.addGameSignal.emit(gameConfig)
         except Exception as e:
-            print(e)
+            signalBus.errorSignal.emit(f"Failed to add game '{name}': {e}")
 
     def getGame(self, name):
         return self.games.get(name)
@@ -115,7 +115,7 @@ class Config(QConfig):
             self.__removeItem(name, 'ScriptPath')
             self.save()
         except Exception as e:
-            print(e)
+            signalBus.errorSignal.emit(f"Failed to remove game '{gameConfig.name}': {e}")
 
     def isTime(self, string):
         try:
