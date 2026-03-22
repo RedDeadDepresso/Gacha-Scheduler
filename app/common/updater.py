@@ -303,13 +303,6 @@ class UpdateManager:
     @Slot(str, str)
     def _onInstallDone(self, _, helper_path: str):
         self._download_dialog.close()
-        dialog = MessageBox(
-            "Update ready",
-            "The update has been downloaded. Gacha Scheduler will now close and apply the update, then restart automatically.",
-            self.main_window
-        )
-        dialog.cancelButton.hide()
-        dialog.exec()
         self._restart(helper_path)
 
     @staticmethod
