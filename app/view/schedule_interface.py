@@ -1,7 +1,6 @@
 # coding:utf-8
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QLabel
-from PySide6.QtWidgets import QVBoxLayout
+from PySide6.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
 
 from qfluentwidgets import PushButton, ScrollArea
 
@@ -15,7 +14,6 @@ class ScheduleInterface(ScrollArea):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        # schedule label
         self.scheduleLabel = QLabel(self.tr("Schedule"), self)
         self.button = PushButton(self.tr("Add"), self)
         self.timeTable = TimeTable(self)
@@ -29,18 +27,20 @@ class ScheduleInterface(ScrollArea):
         self.setWidgetResizable(True)
         self.setObjectName('scheduleInterface')
 
-        # initialize style sheet
         self.scheduleLabel.setObjectName('settingLabel')
         StyleSheet.SETTING_INTERFACE.apply(self)
 
-        # initialize layout
         self.__initLayout()
         self.__connectSignalToSlot()
 
     def __initLayout(self):
+        headerLayout = QHBoxLayout()
+        headerLayout.addWidget(self.scheduleLabel, alignment=Qt.AlignmentFlag.AlignVCenter)
+        headerLayout.addStretch()
+        headerLayout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignVCenter)
+
         layout = QVBoxLayout(self)
-        layout.addWidget(self.scheduleLabel)
-        layout.addWidget(self.button)
+        layout.addLayout(headerLayout)
         layout.addWidget(self.timeTable)
         layout.setStretchFactor(self.timeTable, 1)
         layout.setContentsMargins(36, 30, 30, 36)
@@ -51,5 +51,4 @@ class ScheduleInterface(ScrollArea):
         w.exec()
 
     def __connectSignalToSlot(self):
-        """ connect signal to slot """
         self.button.clicked.connect(self.showMessageBox)
