@@ -144,19 +144,13 @@ try {{
 Start-Sleep -Seconds 2
 
 Log "Running robocopy from $staging to $target"
-$result = robocopy $staging $target /MIR /IS /IT /IM /NFL /NDL /XD "$target\\icons" 2>&1
+$result = robocopy $staging $target /E /IS /IT /IM /NFL /NDL 2>&1
 Log "Robocopy output: $result"
 Log "Robocopy exit code: $LASTEXITCODE"
 
 if ($LASTEXITCODE -gt 7) {{
     Log "ERROR: robocopy failed with exit code $LASTEXITCODE"
 }} else {{
-    # Copy new default icons without /MIR so user-added icons are preserved
-    if (Test-Path "$staging\\icons") {{
-        Log "Copying new default icons (preserving user icons)"
-        $iconsResult = robocopy "$staging\\icons" "$target\\icons" /IS /IT /IM /NFL /NDL 2>&1
-        Log "Icons robocopy exit code: $LASTEXITCODE"
-    }}
     Log "Copy successful. Launching $executable"
     Start-Process $executable
     Log "Launched."
