@@ -4,7 +4,7 @@ import subprocess
 
 from app.common.game_runner import GameRunner
 from enum import Enum
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QFileDialog
 from qfluentwidgets import SettingCard, FluentIconBase, FluentIcon, CommandBar, Action, LineEdit, LineEditButton
@@ -72,6 +72,8 @@ class FileLineEdit(LineEdit):
 
 
 class FileSettingCard(SettingCard):
+    validPathChanged = Signal(str)
+
     def __init__(self, fileType: FileType, configItem, icon: Union[str, QIcon, FluentIconBase], title, content=None, parent=None):
         """
         Parameters
@@ -137,6 +139,7 @@ class FileSettingCard(SettingCard):
         if path.is_absolute() and path.is_file() and path.exists() and path.suffix.lower() in self.fileType.extensions:
             cfg.set(self.configItem, text)
             self.lineEdit.setValid(True)
+            self.validPathChanged.emit(text)
         else:
             self.lineEdit.setValid(False)
 

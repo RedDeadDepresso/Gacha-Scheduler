@@ -46,6 +46,9 @@ class EditInterface(ScrollArea):
         )
         
         self.__initWidget()
+        self.iconCard.validPathChanged.connect(
+            lambda path: gameConfig.navigationGameWidget.updateAvatar(path)
+        )
 
 
     def __initWidget(self):

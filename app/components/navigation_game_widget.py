@@ -40,6 +40,18 @@ class NavigationGameWidget(NavigationWidget):
         self.avatar.setFixedSize(32, 32)
         self.layout.addWidget(self.avatar)
 
+    def updateAvatar(self, iconPath: str):
+        """Replace the avatar with a new image when the icon path changes."""
+        old = self.avatar
+        if isinstance(iconPath, str) and os.path.exists(iconPath):
+            self.avatar = ImageLabel(iconPath)
+            self.avatar.setBorderRadius(6, 6, 6, 6)
+        else:
+            self.avatar = IconWidget(FIF.GAME)
+        self.avatar.setFixedSize(32, 32)
+        self.layout.replaceWidget(old, self.avatar)
+        old.deleteLater()
+
     def _addNameLabel(self):
         self.nameLabel = BodyLabel(self.name, self)
         self.nameLabel.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
