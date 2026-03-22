@@ -2,7 +2,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout
 
-from qfluentwidgets import PushButton, ScrollArea
+from qfluentwidgets import PushButton, ScrollArea, MessageBox, FluentIcon as FIF
 
 from ..common.style_sheet import StyleSheet
 from ..components.timetable import TimeTable
@@ -15,7 +15,8 @@ class ScheduleInterface(ScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.scheduleLabel = QLabel(self.tr("Schedule"), self)
-        self.button = PushButton(self.tr("Add"), self)
+        self.addButton = PushButton(FIF.ADD, self.tr("Add"), self)
+        self.removeButton = PushButton(FIF.REMOVE, self.tr("Remove"), self)
         self.timeTable = TimeTable(self)
 
         self.__initWidget()
@@ -30,6 +31,8 @@ class ScheduleInterface(ScrollArea):
         self.scheduleLabel.setObjectName('settingLabel')
         StyleSheet.SETTING_INTERFACE.apply(self)
 
+        self.removeButton.setDisabled(True)
+
         self.__initLayout()
         self.__connectSignalToSlot()
 
@@ -37,7 +40,8 @@ class ScheduleInterface(ScrollArea):
         headerLayout = QHBoxLayout()
         headerLayout.addWidget(self.scheduleLabel, alignment=Qt.AlignmentFlag.AlignVCenter)
         headerLayout.addStretch()
-        headerLayout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignVCenter)
+        headerLayout.addWidget(self.addButton, alignment=Qt.AlignmentFlag.AlignVCenter)
+        headerLayout.addWidget(self.removeButton, alignment=Qt.AlignmentFlag.AlignVCenter)
 
         layout = QVBoxLayout(self)
         layout.addLayout(headerLayout)
@@ -46,9 +50,29 @@ class ScheduleInterface(ScrollArea):
         layout.setContentsMargins(36, 30, 30, 36)
         self.setLayout(layout)
 
-    def showMessageBox(self):
+    def showAddDialog(self):
         w = TimeMessageBox(self)
         w.exec()
 
+    def showRemoveDialog(self):
+        entries = self.timeTable.selectedEntries()
+        if not entries:
+            return
+
+        names = "\n".join(f"• {time}  {game}" for time, game in entries)
+        dialog = MessageBox(
+            self.tr("Remove selected"),
+            self.tr(f"Are you sure you want to remove {len(entries)} schedule entr{'y' if len(entries) == 1 else 'ies'}?\n\n{names}"),
+            self
+        )
+        dialog.yesButton.setText(self.tr("Remove"))
+        dialog.cancelButton.setText(self.tr("Cancel"))
+        if dialog.exec():
+            self.timeTable.removeSelected()
+
     def __connectSignalToSlot(self):
-        self.button.clicked.connect(self.showMessageBox)
+        self.addButton.clicked.connect(self.showAddDialog)
+        self.removeButton.clicked.connect(self.showRemoveDialog)
+        self.timeTable.selectionChanged_.connect(
+            lambda count: self.removeButton.setDisabled(count == 0)
+        )
