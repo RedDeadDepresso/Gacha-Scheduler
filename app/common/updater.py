@@ -143,17 +143,49 @@ try {{
 
 Start-Sleep -Seconds 2
 
-Log "Running robocopy from $staging to $target"
-$result = robocopy $staging $target /E /IS /IT /IM /NFL /NDL 2>&1
-Log "Robocopy output: $result"
-Log "Robocopy exit code: $LASTEXITCODE"
+Log "Copying files from staging to target"
+$errors = 0
+Get-ChildItem -Path $staging | ForEach-Object {{
+    $dest = Join-Path $target $_.Name
+    try {{
+        if ($_.PSIsContainer) {{
+            if ($_.Name -eq "icons") {{
+                # Only copy icons that don't already exist — preserve user-added icons
+                if (-not (Test-Path $dest)) {{
+                    New-Item -ItemType Directory -Path $dest -Force | Out-Null
+                }}
+                Get-ChildItem -Path $_.FullName | ForEach-Object {{
+                    $iconDest = Join-Path $dest $_.Name
+                    if (-not (Test-Path $iconDest)) {{
+                        Copy-Item -Path $_.FullName -Destination $iconDest -Force
+                        Log "Added new icon: $($_.Name)"
+                    }}
+                }}
+            }} else {{
+                $result = robocopy $_.FullName $dest /E /IS /IT /IM /NFL /NDL 2>&1
+                if ($LASTEXITCODE -le 7) {{
+                    Log "Copied dir: $($_.Name)"
+                }} else {{
+                    Log "ERROR copying dir $($_.Name): exit code $LASTEXITCODE"
+                    $errors++
+                }}
+            }}
+        }} else {{
+            Copy-Item -Path $_.FullName -Destination $dest -Force
+            Log "Copied file: $($_.Name)"
+        }}
+    }} catch {{
+        Log "ERROR copying $($_.Name): $_"
+        $errors++
+    }}
+}}
 
-if ($LASTEXITCODE -gt 7) {{
-    Log "ERROR: robocopy failed with exit code $LASTEXITCODE"
-}} else {{
+if ($errors -eq 0) {{
     Log "Copy successful. Launching $executable"
     Start-Process $executable
     Log "Launched."
+}} else {{
+    Log "ERROR: $errors item(s) failed to copy"
 }}
 """
             helper_path.write_text(helper_script, encoding="utf-8")
