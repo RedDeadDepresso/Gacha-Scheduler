@@ -10,20 +10,26 @@ Gacha-Scheduler is an application to quickly launch and schedule gacha games alo
 
 ## Supported Emulators
 Gacha-Scheduler should be able to launch most applications and emulators.
-If you use emulator instances, you should provide .lnk or .bat file that can launch the game.
+If you use emulator instances, you should provide a .lnk or .bat file that can launch the game.
 
-.lnk files has been tested and confirmed to work with the following emulators:
+.lnk files have been tested and confirmed to work with the following emulators:
 - Bluestacks 5
 - MuMu Player
 - LDPlayer9 (through [LDPlayer-Shortcut-Creator](https://github.com/shazzaam7/LDPlayer-Shortcut-Creator))
 
 ## Installation and Usage
-1. Download the latest release or clone the repository and install the required packages with the command `pip3 install -r requirements.txt`.
-2. Add games by specifying their names and path and optionally an icon and script.
-3. Add a time to the schedule to launch the game.
-4. Remove an entry in the schedule with Right Click.
-5. With the keyboard shortcut `Ctrl+Alt+H` you can hide/show Gacha-Scheduler from the system tray.
-6. [OPTIONAL] [Set Gacha-Scheduler on startup](https://support.microsoft.com/en-us/windows/add-an-app-to-run-automatically-at-startup-in-windows-10-150da165-dcd9-7230-517b-cf3c295d89dd)
+Download the latest release and extract it, then run Gacha-Scheduler.exe.
+
+If you want to run from source code, follow these steps:
+1. Clone or download this repository.
+2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if you haven't already.
+3. Run `uv sync` in the repository folder to create the virtual environment and install dependencies.
+4. Run `uv run gacha_scheduler.py`.
+5. Add games by specifying their names and path, and optionally an icon and script.
+6. Add a time to the schedule to launch the game.
+7. Remove an entry in the schedule with Right Click.
+8. Use the keyboard shortcut (default `Ctrl+Alt+H`) to hide/show Gacha-Scheduler. The shortcut can be changed in Settings.
+9. [OPTIONAL] [Set Gacha-Scheduler on startup](https://support.microsoft.com/en-us/windows/add-an-app-to-run-automatically-at-startup-in-windows-10-150da165-dcd9-7230-517b-cf3c295d89dd)
 
 Please feel free to use and modify Gacha-Scheduler as you see fit. Your feedback and contributions are always welcome.
 
