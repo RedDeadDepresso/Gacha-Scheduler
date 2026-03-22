@@ -133,6 +133,7 @@ class FileSettingCard(SettingCard):
         if not text:
             cfg.set(self.configItem, "")
             self.lineEdit.setValid(True)
+            self.validPathChanged.emit("")
             return
 
         path = pathlib.Path(text)
